@@ -1,5 +1,6 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.TeamService;
 import org.springframework.http.HttpStatus;
@@ -19,10 +20,10 @@ public class TeamController {
         this.teamService = teamService;
     }
 
-    // GET /api/teams - Alle Teams abrufen
+    // GET /api/teams - Alle Teams abrufen ohne email
     @GetMapping
-    public ResponseEntity<List<Team>> getAllTeams() {
-        List<Team> teams = teamService.getAllTeams();
+    public ResponseEntity<List<TeamDto>> getAllTeams() {
+        List<TeamDto> teams = teamService.getAllTeams();
         return ResponseEntity.ok(teams);
     }
 
@@ -60,23 +61,23 @@ public class TeamController {
     }
 
     // GET /api/teams/looking-for-teammates - Teams die Mitspieler suchen
-    @GetMapping("/looking-for-teammates")
-    public ResponseEntity<List<Team>> getTeamsLookingForTeammates() {
-        List<Team> teams = teamService.getTeamsLookingForTeammates();
-        return ResponseEntity.ok(teams);
-    }
+    // @GetMapping("/looking-for-teammates")
+    // public ResponseEntity<List<Team>> getTeamsLookingForTeammates() {
+    //    List<Team> teams = teamService.getTeamsLookingForTeammates();
+    //    return ResponseEntity.ok(teams);
+    //}
 
     // GET /api/teams/paid - Bezahlte Teams
-    @GetMapping("/paid")
-    public ResponseEntity<List<Team>> getPaidTeams() {
-        List<Team> teams = teamService.getPaidTeams();
-        return ResponseEntity.ok(teams);
-    }
+    // @GetMapping("/paid")
+    // public ResponseEntity<List<Team>> getPaidTeams() {
+    //     List<Team> teams = teamService.getPaidTeams();
+    //     return ResponseEntity.ok(teams);
+    // }
 
     // GET /api/teams/search?name={name} - Teams nach Namen suchen
-    @GetMapping("/search")
-    public ResponseEntity<List<Team>> searchTeams(@RequestParam String name) {
-        List<Team> teams = teamService.searchTeamsByName(name);
-        return ResponseEntity.ok(teams);
-    }
+    // @GetMapping("/search")
+    // public ResponseEntity<List<Team>> searchTeams(@RequestParam String name) {
+    //     List<Team> teams = teamService.searchTeamsByName(name);
+    //     return ResponseEntity.ok(teams);
+    // }
 }

@@ -1,5 +1,6 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
 
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,16 @@ import java.util.Optional;
 @Service
 public class TeamService {
 
-    @Autowired
-    private TeamRepository teamRepository;
+    private final TeamRepository teamRepository;
+
+    public TeamService(TeamRepository teamRepository) {
+        this.teamRepository = teamRepository;
+    }
 
     // Alle Teams laden
-    public List<Team> getAllTeams() {
-        return teamRepository.findAll();
+    public List<TeamDto> getAllTeams() {
+        return teamRepository.getAllTeams();
+        //return teamRepository.findAll();
     }
 
     // Team nach ID finden
@@ -48,17 +53,17 @@ public class TeamService {
     }
 
     // Teams die Mitspieler suchen
-    public List<Team> getTeamsLookingForTeammates() {
-        return teamRepository.findByLookingForTeammatesTrue();
-    }
+    // public List<Team> getTeamsLookingForTeammates() {
+    //     return teamRepository.findByLookingForTeammatesTrue();
+    // }
 
     // Bezahlte Teams
-    public List<Team> getPaidTeams() {
-        return teamRepository.findByHasPayedTrue();
-    }
+    // public List<Team> getPaidTeams() {
+    //     return teamRepository.findByHasPayedTrue();
+    // }
 
     // Teams nach Namen suchen
-    public List<Team> searchTeamsByName(String name) {
-        return teamRepository.findByNameContainingIgnoreCase(name);
-    }
+    // public List<Team> searchTeamsByName(String name) {
+    //     return teamRepository.findByNameContainingIgnoreCase(name);
+    // }
 }

@@ -6,12 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Integer> {
 
-    @Query("SELECT new dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamDto(t.teamId, t.name, t.lookingForTeammates, t.hasPayed) FROM Team t")
+    @Query("SELECT new dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamDto(t.teamId, t.name, t.playerCount, t.lookingForTeammates, t.hasPayed) FROM Team t")
     List<TeamDto> getAllTeams();
+
+    @Query("SELECT count(t) FROM Team t")
+    long getTotalTeamCount();
 
     // Alle Teams die noch Mitspieler suchen
     // List<Team> findByLookingForTeammatesTrue();

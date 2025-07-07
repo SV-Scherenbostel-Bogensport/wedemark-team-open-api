@@ -20,7 +20,7 @@ public class TeamController {
         this.teamService = teamService;
     }
 
-    // GET /api/teams - Alle Teams abrufen ohne email
+    // GET /api/teams - alle Teams abrufen ohne E-Mail
     @GetMapping
     public ResponseEntity<List<TeamDto>> getAllTeams() {
         List<TeamDto> teams = teamService.getAllTeams();
@@ -33,6 +33,12 @@ public class TeamController {
         Optional<Team> team = teamService.getTeamById(id);
         return team.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getTotalTeamCount() {
+        long count = teamService.getTotalTeamCount();
+        return ResponseEntity.ok(count);
     }
 
     // POST /api/teams - neues Team erstellen

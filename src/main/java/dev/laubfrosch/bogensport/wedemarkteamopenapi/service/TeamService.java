@@ -28,6 +28,11 @@ public class TeamService {
         return teamRepository.findById(id);
     }
 
+    // Anzahl an Teams
+    public long getTotalTeamCount() {
+        return teamRepository.getTotalTeamCount();
+    }
+
     // Neues Team erstellen
     public Team createTeam(Team team) {
         return teamRepository.save(team);
@@ -51,6 +56,7 @@ public class TeamService {
     public void deleteTeam(Integer id) {
         teamRepository.deleteById(id);
     }
+
 
     // Teams die Mitspieler suchen
     // public List<Team> getTeamsLookingForTeammates() {

@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "teams")
 public class Team {
 
-    // Getter und Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer teamId;
@@ -35,7 +34,6 @@ public class Team {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // Konstruktoren
     public Team() {}
 
     public Team(String name, String contactEmail, Integer playerCount) {

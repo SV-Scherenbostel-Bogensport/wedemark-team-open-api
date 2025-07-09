@@ -1,10 +1,10 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
 
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.AttendeesDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.GetTeamIdsDto;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamDto;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamCountDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.TeamRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +19,8 @@ public class TeamService {
     }
 
     // Alle Teams laden
-    public List<TeamDto> getAllTeams() {
+    public List<AttendeesDto> getAllTeams() {
         return teamRepository.getAllTeams();
-        //return teamRepository.findAll();
     }
 
     // Team nach ID finden
@@ -34,9 +33,8 @@ public class TeamService {
         return teamRepository.getAllTeamIds();
     }
 
-
     // Anzahl an Teams
-    public long getTotalTeamCount() {
+    public TeamCountDto getTotalTeamCount() {
         return teamRepository.getTotalTeamCount();
     }
 
@@ -63,20 +61,4 @@ public class TeamService {
     public void deleteTeam(Integer id) {
         teamRepository.deleteById(id);
     }
-
-
-    // Teams die Mitspieler suchen
-    // public List<Team> getTeamsLookingForTeammates() {
-    //     return teamRepository.findByLookingForTeammatesTrue();
-    // }
-
-    // Bezahlte Teams
-    // public List<Team> getPaidTeams() {
-    //     return teamRepository.findByHasPayedTrue();
-    // }
-
-    // Teams nach Namen suchen
-    // public List<Team> searchTeamsByName(String name) {
-    //     return teamRepository.findByNameContainingIgnoreCase(name);
-    // }
 }

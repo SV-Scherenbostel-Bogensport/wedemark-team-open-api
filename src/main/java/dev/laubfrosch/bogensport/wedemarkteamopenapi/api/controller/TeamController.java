@@ -1,5 +1,6 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.GetTeamIdsDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.TeamService;
@@ -40,6 +41,13 @@ public class TeamController {
         long count = teamService.getTotalTeamCount();
         return ResponseEntity.ok(count);
     }
+
+    @GetMapping("/ids")
+    public ResponseEntity<List<GetTeamIdsDto>> getTeamIds() {
+        List<GetTeamIdsDto> teams = teamService.getTeamIds();
+        return ResponseEntity.ok(teams);
+    }
+
 
     // POST /api/teams - neues Team erstellen
     @PostMapping

@@ -1,5 +1,6 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
 
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.GetTeamIdsDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.TeamRepository;
@@ -27,6 +28,12 @@ public class TeamService {
     public Optional<Team> getTeamById(Integer id) {
         return teamRepository.findById(id);
     }
+
+    // Ids aller Teams ermitteln
+    public List<GetTeamIdsDto> getTeamIds() {
+        return teamRepository.getAllTeamIds();
+    }
+
 
     // Anzahl an Teams
     public long getTotalTeamCount() {

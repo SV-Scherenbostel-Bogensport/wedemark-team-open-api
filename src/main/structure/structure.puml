@@ -1,0 +1,153 @@
+@startuml
+hide circle
+
+'package "Teams & Players" #dfe3ff {}
+
+entity "tournament" as tournament #adf587 {
+    tournament_id: number <<PK>>
+    __
+    name: varchar(255)
+    location: varchar(255)
+    date: datetime
+    registration_deadline: number
+    allow_registration: boolean
+    max_slots: number
+}
+
+entity "teams" as teams #adb0ff {
+    team_id: number <<PK>>
+    --
+    name: varchar(255)
+    contact_email: varchar(255)
+    player_count: number
+    has_payed: boolean
+    looking_for_teammates: boolean
+
+    created_at: datetime
+}
+
+entity "players" as players #adb0ff {
+    player_id: number <<PK>>
+    team_id: number -- FK → teams.team_id
+    __
+    squad_number: smallint <<unique(team_id)>>
+    --
+    first_name: varchar(255)
+    last_name: varchar(255)
+}
+
+'package "Competition Structure" #ffd4d7 {}
+
+entity "rounds" as rounds #ffa1a3 {
+    round_id: number <<PK>>
+    status_id: number -- FK → status.status_id
+    --
+    description: text
+    is_knock_out: boolean
+
+    updated_at: datetime
+}
+
+
+entity "matches" as matches #ffa1a3 {
+    match_id: number
+    round_id: -- FK → rounds.round_id
+    status_id: -- FK → status.status_id
+    --
+    description: text
+
+    team1_id: number -- FK → teams.team_id
+    team2_id: number -- FK → teams.team_id
+    winner_team_id: number -- FK → teams.team_id
+
+    target1_id: number -- FK → target.target_id
+    target2_id: number -- FK → target.target_id
+
+    created_at: datetime
+    updated_at: datetime
+}
+
+
+entity "sets" as sets #ffa1a3 {
+    set_id: number <<PK>>
+    match_id: number -- FK → matches.match_id
+    __
+    set_index: smallint <<unique(match_id)>>
+    --
+    total_team1: number
+    total_team2: number
+    points_team1: number
+    points_team2: number
+
+    created_at: datetime
+    updated_at: datetime
+}
+
+
+'package "Scoring" as scoring #d4fff6 {}
+
+entity "arrows" as arrows #a1ffe3 {
+    arrow_id: number <<PK>>
+    score_code: varchar(128) -- FK → scores.score_code
+    player_id: number -- FK → players.player_id
+    set_id: number -- FK → sets.set_id
+    __
+    arrow_index: smallint <<unique(set_id,player_id)>>
+}
+
+entity "scores" as scores #a1ffe3 {
+    score_code: varchar(128) <<PK>>
+    --
+    value: int
+    color: char(7)
+}
+
+
+
+'package "Info" #fff6d4 {}
+
+entity "status" as status #ffe3a1 {
+    status_id: number <<PK>>
+    --
+    label: varchar(128)
+    description: text
+
+    primary_color: char(7)
+    secondary_color: char(7)
+    pulsing: boolean
+}
+
+entity "targets" as targets #ffe3a1 {
+    target_id: number <<PK>>
+    --
+    code: varchar(16) <<unique>>
+}
+
+
+'Relationships'
+
+teams ||--o{ players : "team_id"
+
+arrows }o--|| scores : "score_code"
+arrows }o--|| players : "player_id"
+arrows }o--|| sets : "set_id"
+
+sets }o--|| matches : "match_id"
+
+matches }o--|| teams : "team1_id,\nteam2_id,\nwinner_team_id"
+
+matches }o--|| targets : "target1_id,\ntarget2_id"
+
+matches }o--|| rounds : "round_id"
+matches }o--|| status : "status_id"
+
+rounds }o--|| status : "status_id"
+
+
+
+
+
+
+
+
+@enduml

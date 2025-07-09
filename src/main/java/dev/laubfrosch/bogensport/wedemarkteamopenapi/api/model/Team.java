@@ -16,10 +16,10 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer teamId;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "contact_email", length = 255)
+    @Column(name = "contact_email")
     private String contactEmail;
 
     @Column(name = "player_count")
@@ -35,13 +35,6 @@ public class Team {
     private LocalDateTime createdAt;
 
     public Team() {}
-
-    public Team(String name, String contactEmail, Integer playerCount) {
-        this.name = name;
-        this.contactEmail = contactEmail;
-        this.playerCount = playerCount;
-        this.createdAt = LocalDateTime.now();
-    }
 
     @PrePersist
     protected void onCreate() {

@@ -58,7 +58,11 @@ public class TeamService {
     }
 
     // Team löschen
-    public void deleteTeam(Integer id) {
-        teamRepository.deleteById(id);
+    public boolean deleteTeam(Integer id) {
+        if (teamRepository.existsById(id)) {
+            teamRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

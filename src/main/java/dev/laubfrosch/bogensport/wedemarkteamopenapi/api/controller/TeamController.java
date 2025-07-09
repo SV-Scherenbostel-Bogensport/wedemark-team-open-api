@@ -37,12 +37,14 @@ public class TeamController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // GET /api/teams/count - Anzahl aller Teams abrufen
     @GetMapping("/count")
     public ResponseEntity<TeamCountDto> getTotalTeamCount() {
         TeamCountDto count = teamService.getTotalTeamCount();
         return ResponseEntity.ok(count);
     }
 
+    // GET /api/teams/ids - Id und Name aller Teams abrufen
     @GetMapping("/ids")
     public ResponseEntity<List<GetTeamIdsDto>> getTeamIds() {
         List<GetTeamIdsDto> teams = teamService.getTeamIds();
@@ -70,7 +72,10 @@ public class TeamController {
     // DELETE /api/teams/{id} - Team löschen
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTeam(@PathVariable Integer id) {
-        teamService.deleteTeam(id);
-        return ResponseEntity.noContent().build();
+        if(teamService.deleteTeam(id)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

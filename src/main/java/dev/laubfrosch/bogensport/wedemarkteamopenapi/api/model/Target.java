@@ -15,7 +15,7 @@ public class Target {
     @Column(name = "target_id")
     private Integer targetId;
 
-    @Column(name = "code", length = 16, nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 16)
     private String code;
 
     public Target() {}

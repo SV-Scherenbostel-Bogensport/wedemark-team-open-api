@@ -3,16 +3,16 @@ hide circle
 
 'package "Teams & Players" #dfe3ff {}
 
-entity "tournament" as tournament #adf587 {
-    tournament_id: number <<PK>>
-    __
-    name: varchar(255)
-    location: varchar(255)
-    date: datetime
-    registration_deadline: number
-    allow_registration: boolean
-    max_slots: number
-}
+'entity "tournament" as tournament #adf587 {
+'    tournament_id: number <<PK>>
+'    __
+'    name: varchar(255)
+'    location: varchar(255)
+'    date: datetime
+'    registration_deadline: number
+'    allow_registration: boolean
+'    max_slots: number
+'}
 
 entity "teams" as teams #adb0ff {
     team_id: number <<PK>>
@@ -63,7 +63,6 @@ entity "matches" as matches #ffa1a3 {
     target1_id: number -- FK → target.target_id
     target2_id: number -- FK → target.target_id
 
-    created_at: datetime
     updated_at: datetime
 }
 

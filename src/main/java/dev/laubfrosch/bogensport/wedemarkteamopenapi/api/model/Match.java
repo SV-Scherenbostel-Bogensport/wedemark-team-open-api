@@ -48,18 +48,10 @@ public class Match {
     @JoinColumn(name = "target2_id", referencedColumnName = "target_id")
     private Target target2;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     public Match() {}
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
 
     @PreUpdate
     protected void onUpdate() {

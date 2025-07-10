@@ -55,7 +55,6 @@ CREATE TABLE matches (
     winner_team_id INT REFERENCES teams(team_id),
     target1_id INT REFERENCES targets(target_id),
     target2_id INT REFERENCES targets(target_id),
-    created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP
 );
 

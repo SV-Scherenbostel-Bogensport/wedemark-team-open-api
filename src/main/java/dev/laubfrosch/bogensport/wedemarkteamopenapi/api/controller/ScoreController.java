@@ -27,7 +27,7 @@ public class ScoreController {
         return ResponseEntity.ok(targets);
     }
 
-    // GET /api/scores - alle Scores abrufen
+    // GET /api/scores/{scoreCode} - Score nach ID abrufen
     @GetMapping("/{scoreCode}")
     public ResponseEntity<Score> getScoreByScoreCode(@PathVariable String scoreCode) {
         return scoreService.getScoreByScoreCode(scoreCode)

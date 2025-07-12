@@ -35,14 +35,14 @@ public class RoundController {
     }
 
     // GET /api/rounds/qualification - Alle Qualifikationsrunden abrufen
-    @GetMapping("/rounds/qualification")
+    @GetMapping("/qualification")
     public ResponseEntity<List<Round>> getAllQualificationRounds() {
         List<Round> rounds = roundService.getAllQualificationRounds();
         return ResponseEntity.ok(rounds);
     }
 
     // GET /api/rounds/knockout - Alle Finalrunden abrufen
-    @GetMapping("/rounds/knockout")
+    @GetMapping("/knockout")
     public ResponseEntity<List<Round>> getAllKnockoutRounds() {
         List<Round> rounds = roundService.getAllKnockoutRounds();
         return ResponseEntity.ok(rounds);

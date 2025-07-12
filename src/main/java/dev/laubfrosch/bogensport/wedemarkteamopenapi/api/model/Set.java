@@ -1,5 +1,6 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,8 +22,12 @@ public class Set {
     @Column(name = "set_id")
     private Integer setId;
 
+    @Column(name = "match_id", nullable = false)
+    private Integer matchId;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "match_id", referencedColumnName = "match_id", nullable = false)
+    @JoinColumn(name = "match_id", referencedColumnName = "match_id", nullable = false, insertable = false, updatable = false)
+    @JsonIgnore
     private Match match;
 
     @Column(name = "set_index", nullable = false)

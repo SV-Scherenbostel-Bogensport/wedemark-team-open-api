@@ -1,9 +1,12 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.AttendeesDto;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.CountDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.GetTeamIdsDto;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamCountDto;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.PlayersByTeamDto;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Player;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.PlayerRepository;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.TeamRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -13,9 +16,11 @@ import java.util.Optional;
 public class TeamService {
 
     private final TeamRepository teamRepository;
+    private final PlayerRepository playerRepository;
 
-    public TeamService(TeamRepository teamRepository) {
+    public TeamService(TeamRepository teamRepository, PlayerRepository playerRepository) {
         this.teamRepository = teamRepository;
+        this.playerRepository = playerRepository;
     }
 
     // Alle Teams laden
@@ -34,8 +39,8 @@ public class TeamService {
     }
 
     // Anzahl an Teams
-    public TeamCountDto getTotalTeamCount() {
-        return teamRepository.getTotalTeamCount();
+    public CountDto getTotalTeamCount() {
+        return teamRepository.countTeams();
     }
 
     // Neues Team erstellen
@@ -46,7 +51,7 @@ public class TeamService {
     // Team aktualisieren
     public Team updateTeam(Integer id, Team teamDetails) {
         Team team = teamRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Team nicht gefunden mit ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Team mit ID " + id + " nicht gefunden"));
 
         team.setName(teamDetails.getName());
         team.setContactEmail(teamDetails.getContactEmail());
@@ -64,5 +69,15 @@ public class TeamService {
             return true;
         }
         return false;
+    }
+
+    // Alle Spieler eines Teams ausgeben
+    public PlayersByTeamDto getPlayersByTeam(Integer id) {
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Team mit ID " + id + " nicht gefunden"));
+
+        List<Player> players = playerRepository.findByTeam(team);
+
+        return new PlayersByTeamDto(id, team.getName(), players);
     }
 }

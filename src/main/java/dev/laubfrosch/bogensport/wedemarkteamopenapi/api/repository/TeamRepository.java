@@ -1,8 +1,8 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.AttendeesDto;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.CountDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.GetTeamIdsDto;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamCountDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +16,7 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
     List<AttendeesDto> getAllTeams();
 
     @Query("SELECT count(t) FROM Team t")
-    TeamCountDto getTotalTeamCount();
+    CountDto countTeams();
 
     @Query("SELECT new dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.GetTeamIdsDto(t.teamId, t.name) FROM Team t")
     List<GetTeamIdsDto> getAllTeamIds();

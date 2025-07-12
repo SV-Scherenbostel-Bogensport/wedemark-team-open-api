@@ -1,10 +1,13 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.CountDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.GetTeamIdsDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.AttendeesDto;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamCountDto;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.PlayersByTeamDto;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Player;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.TeamService;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +42,8 @@ public class TeamController {
 
     // GET /api/teams/count - Anzahl aller Teams abrufen
     @GetMapping("/count")
-    public ResponseEntity<TeamCountDto> getTotalTeamCount() {
-        TeamCountDto count = teamService.getTotalTeamCount();
+    public ResponseEntity<CountDto> getTotalTeamCount() {
+        CountDto count = teamService.getTotalTeamCount();
         return ResponseEntity.ok(count);
     }
 
@@ -78,4 +81,12 @@ public class TeamController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // GET /api/teams/{id}/players
+    @GetMapping("/{id}/players")
+    public ResponseEntity<PlayersByTeamDto> getPlayersByTeam(@PathVariable @Min(1) Integer id) {
+        PlayersByTeamDto playersDto = teamService.getPlayersByTeam(id);
+        return ResponseEntity.ok(playersDto);
+    }
+
 }

@@ -45,7 +45,7 @@ VALUES
 INSERT INTO players
     (team_id, squad_number, first_name, last_name)
 VALUES
-    (1, 1, '', '');
+    (1, 1, 'Jörg', 'Ostendorp');
 
 
 -- Rounds

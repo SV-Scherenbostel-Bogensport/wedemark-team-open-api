@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/wedemarkteamopen/2025/teams")
@@ -34,9 +33,8 @@ public class TeamController {
     // GET /api/teams/{id} - Team nach ID abrufen
     @GetMapping("/{id}")
     public ResponseEntity<Team> getTeamById(@PathVariable Integer id) {
-        Optional<Team> team = teamService.getTeamById(id);
-        return team.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Team team = teamService.getTeamById(id);
+        return ResponseEntity.ok(team);
     }
 
     // GET /api/teams/count - Anzahl aller Teams abrufen
@@ -63,22 +61,15 @@ public class TeamController {
     // PUT /api/teams/{id} - Team aktualisieren
     @PutMapping("/{id}")
     public ResponseEntity<Team> updateTeam(@PathVariable Integer id, @RequestBody Team teamDetails) {
-        try {
-            Team updatedTeam = teamService.updateTeam(id, teamDetails);
-            return ResponseEntity.ok(updatedTeam);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Team updatedTeam = teamService.updateTeam(id, teamDetails);
+        return ResponseEntity.ok(updatedTeam);
     }
 
     // DELETE /api/teams/{id} - Team löschen
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTeam(@PathVariable Integer id) {
-        if(teamService.deleteTeam(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        teamService.deleteTeam(id);
+        return ResponseEntity.noContent().build();
     }
 
     // GET /api/teams/{id}/players
@@ -87,5 +78,4 @@ public class TeamController {
         PlayersByTeamDto playersDto = teamService.getPlayersByTeam(id);
         return ResponseEntity.ok(playersDto);
     }
-
 }

@@ -2,10 +2,11 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Target;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.TargetRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TargetService {
@@ -22,35 +23,45 @@ public class TargetService {
     }
 
     // Target nach ID finden
-    public Optional<Target> getTargetById(Integer id) {
-        return targetRepository.findById(id);
+    public Target getTargetById(Integer id) {
+        return targetRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Target nicht gefunden mit ID: " + id));
     }
 
     // Target nach Code finden
-    public Optional<Target> getTargetByCode(String code) {
-        return targetRepository.findByCode(code);
+    public Target getTargetByCode(String code) {
+        return targetRepository.findByCode(code)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Target nicht gefunden mit Code: " + code));
     }
 
     // Neues Target erstellen
     public Target createTarget(Target target) {
+        if (targetRepository.findByCode(target.getCode()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Target mit Code '" + target.getCode() + "' existiert bereits");
+        }
         return targetRepository.save(target);
     }
 
     // Target aktualisieren
-    public Optional<Target> updateTarget(Integer id, Target updatedTarget) {
-        return targetRepository.findById(id).map(existing -> {
-            existing.setCode(updatedTarget.getCode());
-            return targetRepository.save(existing);
+    public Target updateTarget(Integer id, Target updatedTarget) {
+        Target existing = targetRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Target nicht gefunden mit ID: " + id));
+
+        targetRepository.findByCode(updatedTarget.getCode()).ifPresent(target -> {
+            if (!target.getTargetId().equals(id)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Target mit Code '" + updatedTarget.getCode() + "' existiert bereits");
+            }
         });
+
+        existing.setCode(updatedTarget.getCode());
+        return targetRepository.save(existing);
     }
 
     // Target löschen
-    public boolean deleteTarget(Integer id) {
-        if (targetRepository.existsById(id)) {
-            targetRepository.deleteById(id);
-            return true;
+    public void deleteTarget(Integer id) {
+        if (!targetRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Target nicht gefunden mit ID: " + id);
         }
-        return false;
+        targetRepository.deleteById(id);
     }
-
 }

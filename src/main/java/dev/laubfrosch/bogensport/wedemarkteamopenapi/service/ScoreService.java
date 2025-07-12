@@ -2,10 +2,11 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Score;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.ScoreRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ScoreService {
@@ -21,8 +22,9 @@ public class ScoreService {
         return scoreRepository.findAll();
     }
 
-    // Target nach Code finden
-    public Optional<Score> getScoreByScoreCode(String scoreCode) {
-        return scoreRepository.findByScoreCode(scoreCode);
+    // Score nach Code finden
+    public Score getScoreByScoreCode(String scoreCode) {
+        return scoreRepository.findByScoreCode(scoreCode)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Score nicht gefunden mit Code: " + scoreCode));
     }
 }

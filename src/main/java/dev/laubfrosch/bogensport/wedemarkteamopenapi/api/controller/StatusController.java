@@ -30,8 +30,7 @@ public class StatusController {
     // GET /api/status/{id} - Status nach ID abrufen
     @GetMapping("/{id}")
     public ResponseEntity<Status> getAllStatusById(@PathVariable Integer id) {
-        return statusService.getStatusById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Status staus = statusService.getStatusById(id);
+        return  ResponseEntity.ok(staus);
     }
 }

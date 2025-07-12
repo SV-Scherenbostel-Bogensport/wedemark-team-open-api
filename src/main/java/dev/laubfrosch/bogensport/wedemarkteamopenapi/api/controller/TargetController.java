@@ -27,17 +27,15 @@ public class TargetController {
     // GET /api/targets/{id} - Target nach ID abrufen
     @GetMapping("/{id}")
     public ResponseEntity<Target> getTargetById(@PathVariable Integer id) {
-        return targetService.getTargetById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Target target = targetService.getTargetById(id);
+        return ResponseEntity.ok(target);
     }
 
     // GET /api/targets/code/{code} - Target nach Code abrufen
     @GetMapping("/code/{code}")
     public ResponseEntity<Target> getTargetByCode(@PathVariable String code) {
-        return targetService.getTargetByCode(code)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Target target = targetService.getTargetByCode(code);
+        return ResponseEntity.ok(target);
     }
 
     // POST /api/targets - neues Target erstellen
@@ -50,19 +48,14 @@ public class TargetController {
     // PUT /api/targets/{id} - Target aktualisieren
     @PutMapping("/{id}")
     public ResponseEntity<Target> updateTarget(@PathVariable Integer id, @RequestBody Target updatedTarget) {
-        return targetService.updateTarget(id, updatedTarget)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Target target = targetService.updateTarget(id, updatedTarget);
+        return ResponseEntity.ok(target);
     }
 
     // DELETE /api/targets/{id} - Target löschen
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTarget(@PathVariable Integer id) {
-        if (targetService.deleteTarget(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        targetService.deleteTarget(id);
+        return ResponseEntity.noContent().build();
     }
-
 }

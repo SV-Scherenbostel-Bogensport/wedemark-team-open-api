@@ -2,10 +2,11 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Status;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.StatusRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StatusService {
@@ -22,7 +23,8 @@ public class StatusService {
     }
 
     // Status nach ID finden
-    public Optional<Status> getStatusById(Integer id) {
-        return statusRepository.findById(id);
+    public Status getStatusById(Integer id) {
+        return statusRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Status nicht gefunden mit ID: " + id));
     }
 }

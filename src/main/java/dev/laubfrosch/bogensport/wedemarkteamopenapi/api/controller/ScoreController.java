@@ -30,9 +30,7 @@ public class ScoreController {
     // GET /api/scores/{scoreCode} - Score nach ID abrufen
     @GetMapping("/{scoreCode}")
     public ResponseEntity<Score> getScoreByScoreCode(@PathVariable String scoreCode) {
-        return scoreService.getScoreByScoreCode(scoreCode)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Score score = scoreService.getScoreByScoreCode(scoreCode);
+        return ResponseEntity.ok(score);
     }
-
 }

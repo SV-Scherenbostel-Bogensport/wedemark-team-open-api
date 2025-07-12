@@ -29,9 +29,8 @@ public class PlayerController {
     // GET /api/players/{id} - Player nach ID abrufen
     @GetMapping("/{id}")
     public ResponseEntity<Player> getPlayerById(@PathVariable Integer id) {
-        return playerService.getPlayerById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Player player = playerService.getPlayerById(id);
+        return ResponseEntity.ok(player);
     }
     
     // GET /api/players/count - Anzahl aller Players abrufen
@@ -51,21 +50,14 @@ public class PlayerController {
     // PUT /api/players/{id} - Player aktualisieren
     @PutMapping("/{id}")
     public ResponseEntity<Player> updatePlayer(@PathVariable Integer id, @RequestBody Player playerDetails) {
-        try {
-            Player updatedPlayer = playerService.updatePlayer(id, playerDetails);
-            return ResponseEntity.ok(updatedPlayer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Player updatedPlayer = playerService.updatePlayer(id, playerDetails);
+        return ResponseEntity.ok(updatedPlayer);
     }
 
     // DELETE /api/players/{id} - Player löschen
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePlayer(@PathVariable Integer id) {
-        if(playerService.deletePlayer(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        playerService.deletePlayer(id);
+        return ResponseEntity.noContent().build();
     }
 }

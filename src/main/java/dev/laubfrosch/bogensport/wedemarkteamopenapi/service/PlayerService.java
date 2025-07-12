@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PlayerService {
@@ -28,8 +27,9 @@ public class PlayerService {
     }
 
     // Player nach ID finden
-    public Optional<Player> getPlayerById(Integer id) {
-        return playerRepository.findById(id);
+    public Player getPlayerById(Integer id) {
+        return playerRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player nicht gefunden mit ID: " + id));
     }
 
     // Anzahl aller Player
@@ -68,11 +68,10 @@ public class PlayerService {
     }
 
     // Player löschen
-    public boolean deletePlayer(Integer id) {
-        if (playerRepository.existsById(id)) {
-            playerRepository.deleteById(id);
-            return true;
+    public void deletePlayer(Integer id) {
+        if (!playerRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player nicht gefunden mit ID: " + id);
         }
-        return false;
+        playerRepository.deleteById(id);
     }
 }

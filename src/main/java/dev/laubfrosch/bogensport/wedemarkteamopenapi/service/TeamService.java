@@ -8,9 +8,10 @@ import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Player;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.PlayerRepository;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.TeamRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TeamService {
@@ -29,8 +30,9 @@ public class TeamService {
     }
 
     // Team nach ID finden
-    public Optional<Team> getTeamById(Integer id) {
-        return teamRepository.findById(id);
+    public Team getTeamById(Integer id) {
+        return teamRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team nicht gefunden mit ID: " + id));
     }
 
     // Ids aller Teams ermitteln
@@ -51,7 +53,7 @@ public class TeamService {
     // Team aktualisieren
     public Team updateTeam(Integer id, Team teamDetails) {
         Team team = teamRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Team mit ID " + id + " nicht gefunden"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team nicht gefunden mit ID: " + id));
 
         team.setName(teamDetails.getName());
         team.setContactEmail(teamDetails.getContactEmail());
@@ -63,18 +65,17 @@ public class TeamService {
     }
 
     // Team löschen
-    public boolean deleteTeam(Integer id) {
-        if (teamRepository.existsById(id)) {
-            teamRepository.deleteById(id);
-            return true;
+    public void deleteTeam(Integer id) {
+        if (!teamRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Team nicht gefunden mit ID: " + id);
         }
-        return false;
+        teamRepository.deleteById(id);
     }
 
     // Alle Spieler eines Teams ausgeben
     public PlayersByTeamDto getPlayersByTeam(Integer id) {
         Team team = teamRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Team mit ID " + id + " nicht gefunden"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team nicht gefunden mit ID: " + id));
 
         List<Player> players = playerRepository.findByTeamId(id);
 

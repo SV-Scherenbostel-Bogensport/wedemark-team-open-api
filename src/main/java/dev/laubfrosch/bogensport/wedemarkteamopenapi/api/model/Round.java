@@ -1,5 +1,7 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +16,16 @@ public class Round {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "round_id")
     private Integer roundId;
 
+    @Column(name = "status_id", nullable = false)
+    private Integer statusId;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "status_id", referencedColumnName = "status_id", nullable = false)
+    @JoinColumn(name = "status_id", referencedColumnName = "status_id", nullable = false, insertable = false, updatable = false)
+    @JsonIgnore
     private Status status;
 
     @Column(columnDefinition = "TEXT")

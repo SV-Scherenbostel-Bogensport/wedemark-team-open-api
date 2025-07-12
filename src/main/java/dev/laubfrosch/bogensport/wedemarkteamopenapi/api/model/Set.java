@@ -1,5 +1,6 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ public class Set {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "set_id")
     private Integer setId;
 

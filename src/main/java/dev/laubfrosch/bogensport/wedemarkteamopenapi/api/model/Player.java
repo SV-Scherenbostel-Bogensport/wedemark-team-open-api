@@ -20,11 +20,11 @@ public class Player {
     @Column(name = "player_id")
     private Integer playerId;
 
-    @Column(name = "team_id")
+    @Column(name = "team_id", nullable = false)
     private Integer teamId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id", referencedColumnName = "team_id", insertable = false, updatable = false)
+    @JoinColumn(name = "team_id", referencedColumnName = "team_id", nullable = false, insertable = false, updatable = false)
     @JsonIgnore
     private Team team;
 

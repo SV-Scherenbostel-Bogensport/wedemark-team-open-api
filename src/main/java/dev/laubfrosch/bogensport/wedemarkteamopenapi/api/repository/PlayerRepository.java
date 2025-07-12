@@ -15,6 +15,6 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
     @Query("SELECT count(p) FROM Player p")
     CountDto countPlayers();
 
-    List<Player> findByTeam(Team team);
+    List<Player> findByTeamId(Integer id);
 
 }

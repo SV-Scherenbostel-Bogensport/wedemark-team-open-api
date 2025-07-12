@@ -28,7 +28,7 @@ CREATE TABLE teams (
 -- Players
 CREATE TABLE players (
     player_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    team_id INT REFERENCES teams(team_id),
+    team_id INT NOT NULL REFERENCES teams(team_id),
     squad_number SMALLINT,
     first_name VARCHAR(255),
     last_name VARCHAR(255),

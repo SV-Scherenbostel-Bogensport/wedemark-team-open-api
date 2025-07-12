@@ -1,7 +1,7 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,18 +16,17 @@ public class Player {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "player_id")
     private Integer playerId;
 
+    @Column(name = "team_id")
+    private Integer teamId;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id", referencedColumnName = "team_id")
+    @JoinColumn(name = "team_id", referencedColumnName = "team_id", insertable = false, updatable = false)
     @JsonIgnore
     private Team team;
-
-    @JsonProperty("teamId")
-    public Integer getTeamId() {
-        return team != null ? team.getTeamId() : null;
-    }
 
     @Column(name = "squad_number")
     private Short squadNumber;

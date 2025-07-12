@@ -76,7 +76,7 @@ public class TeamService {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Team mit ID " + id + " nicht gefunden"));
 
-        List<Player> players = playerRepository.findByTeam(team);
+        List<Player> players = playerRepository.findByTeamId(id);
 
         return new PlayersByTeamDto(id, team.getName(), players);
     }

@@ -3,7 +3,10 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.CountDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Player;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.PlayerRepository;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.TeamRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +15,11 @@ import java.util.Optional;
 public class PlayerService {
 
     final PlayerRepository playerRepository;
+    final TeamRepository teamRepository;
 
-    public PlayerService(PlayerRepository playerRepository) {
+    public PlayerService(PlayerRepository playerRepository, TeamRepository teamRepository) {
         this.playerRepository = playerRepository;
+        this.teamRepository = teamRepository;
     }
 
     // Alle Player laden
@@ -34,15 +39,27 @@ public class PlayerService {
 
     // Neuen Player anlegen
     public Player createPlayer(Player player) {
+        if (player.getTeamId() != null) {
+            if (!teamRepository.existsById(player.getTeamId())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Team mit ID " + player.getTeamId() + " existiert nicht");
+            }
+        }
+
         return playerRepository.save(player);
     }
 
     // Player aktualisieren
     public Player updatePlayer(Integer id, Player playerDetails) {
         Player player = playerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Player nicht gefunden mit ID: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player nicht gefunden mit ID: " + id));
 
-        player.setTeam(playerDetails.getTeam());
+        if (playerDetails.getTeamId() != null) {
+            if (!teamRepository.existsById(playerDetails.getTeamId())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Team mit ID " + playerDetails.getTeamId() + " existiert nicht");
+            }
+        }
+
+        player.setTeamId(playerDetails.getTeamId());
         player.setSquadNumber(playerDetails.getSquadNumber());
         player.setFirstName(playerDetails.getFirstName());
         player.setLastName(playerDetails.getLastName());

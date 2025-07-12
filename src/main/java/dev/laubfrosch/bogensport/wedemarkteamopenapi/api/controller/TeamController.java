@@ -4,7 +4,6 @@ import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.CountDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.GetTeamIdsDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.AttendeesDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.PlayersByTeamDto;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Player;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.TeamService;
 import jakarta.validation.constraints.Min;

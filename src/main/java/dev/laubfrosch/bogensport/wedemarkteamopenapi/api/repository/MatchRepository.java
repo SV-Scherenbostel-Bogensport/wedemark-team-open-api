@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Integer> {
 
-    @Query("SELECT m.matchId FROM Match m WHERE m.roundId = :roundId")
+    @Query("SELECT m.matchId FROM Match m WHERE m.roundId = :roundId ORDER BY m.matchId")
     List<Integer> findMatchIdsByRoundId(@Param("roundId") Integer roundId);
 }

@@ -3,10 +3,7 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Set;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.SetService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,5 +29,23 @@ public class SetController {
     public ResponseEntity<Set> getSetById(@PathVariable Integer id) {
         Set set = setService.getSetById(id);
         return ResponseEntity.ok(set);
+
     }
+
+    // TODO: GET /api/sets/{id}/arrows (sortiert nach Team?)
+
+    // PUT /api/sets - Set hinzufügen oder aktualisieren
+    @PutMapping
+    public ResponseEntity<Set> upsertSet(@RequestBody Set set) {
+        Set saveSet = setService.upsertSet(set);
+        return ResponseEntity.ok(saveSet);
+    }
+
+    // DELETE /api/sets/{id} - Set löschen
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSet(@PathVariable Integer id) {
+        setService.deleteSet(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -33,4 +33,14 @@ public class MatchController {
         Match match = matchService.getMatchById(id);
         return ResponseEntity.ok(match);
     }
+
+    // TODO: GET /api/matches/{id}/sets
+
+    // TODO: PATCH /api/matches/{id}/teams // Teams setzen nach vorheriger Runde/Match
+    // TODO: PATCH /api/matches/{id}/targets // nicht unbedingt nötig, da initiiert
+    // TODO: PATCH /api/matches/{id}/totalPoints // Updaten nach jedem Satz
+    // TODO: PATCH /api/matches/{id}/winner // Setzen nach match ende
+    // oder
+    // TODO: PATCH /api/matches/{id} // und optionalen Parametern (bisher favourite)
+
 }

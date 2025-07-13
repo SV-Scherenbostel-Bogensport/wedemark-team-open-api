@@ -3,6 +3,7 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,7 @@ public class Set {
     private Integer setId;
 
     @Column(name = "match_id", nullable = false)
+    @NotNull(message = "MatchId ist erforderlich")
     private Integer matchId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,6 +33,7 @@ public class Set {
     private Match match;
 
     @Column(name = "set_index", nullable = false)
+    @NotNull(message = "SetIndex ist erforderlich")
     private Short setIndex;
 
     @Column(name = "total_team1")

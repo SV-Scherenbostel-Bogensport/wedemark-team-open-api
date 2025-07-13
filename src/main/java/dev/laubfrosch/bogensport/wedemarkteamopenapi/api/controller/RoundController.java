@@ -1,5 +1,6 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.RoundMatchIdsResponse;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Round;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.RoundService;
 import org.springframework.http.ResponseEntity;
@@ -48,5 +49,10 @@ public class RoundController {
         return ResponseEntity.ok(rounds);
     }
 
-    // TODO: // GET /api/rounds/{id}/matches
+    // GET /api/rounds/{id}/matches - Alle MatchIds von Matches der jeweiligen Runde abrufen
+    @GetMapping("/{id}/matches")
+    public ResponseEntity<RoundMatchIdsResponse> getAllRoundMatchIds(@PathVariable Integer id) {
+        RoundMatchIdsResponse matches = roundService.getAllRoundMatchIds(id);
+        return ResponseEntity.ok(matches);
+    }
 }

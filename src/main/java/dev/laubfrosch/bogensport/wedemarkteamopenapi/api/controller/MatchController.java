@@ -1,5 +1,6 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.MatchInfoDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Match;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.MatchService;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +35,14 @@ public class MatchController {
         return ResponseEntity.ok(match);
     }
 
-    // TODO: GET /api/matches/{id}/sets
+    @GetMapping("/{id}/sets")
+    public ResponseEntity<MatchInfoDto> getMatchWithSets(@PathVariable Integer id) {
+        MatchInfoDto match = matchService.getMatchWithSets(id);
+        return ResponseEntity.ok(match);
+    }
 
     // TODO: PATCH /api/matches/{id}/teams // Teams setzen nach vorheriger Runde/Match
     // TODO: PATCH /api/matches/{id}/targets // nicht unbedingt nötig, da initiiert
-    // TODO: PATCH /api/matches/{id}/totalPoints // Updaten nach jedem Satz
     // TODO: PATCH /api/matches/{id}/winner // Setzen nach match ende
     // oder
     // TODO: PATCH /api/matches/{id} // und optionalen Parametern (bisher favourite)

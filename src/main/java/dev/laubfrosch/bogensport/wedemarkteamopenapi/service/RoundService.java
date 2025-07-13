@@ -1,6 +1,8 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
 
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.RoundMatchIdsResponse;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Round;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.MatchRepository;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.RoundRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,9 +14,11 @@ import java.util.List;
 public class RoundService {
 
     final RoundRepository roundRepository;
+    final MatchRepository matchRepository;
 
-    public RoundService(RoundRepository roundRepository) {
+    public RoundService(RoundRepository roundRepository, MatchRepository matchRepository) {
         this.roundRepository = roundRepository;
+        this.matchRepository = matchRepository;
     }
 
     // Alle Runden laden
@@ -36,5 +40,16 @@ public class RoundService {
     // Alle Finalrunden laden
     public List<Round> getAllKnockoutRounds() {
         return roundRepository.findByIsKnockOutTrue();
+    }
+
+    // Alle Match Ids einer Runde laden
+    public RoundMatchIdsResponse getAllRoundMatchIds(Integer id) {
+
+        if (!roundRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Runde nicht gefunden mit ID: " + id);
+        }
+
+        List<Integer> roundMatchIds = matchRepository.findMatchIdsByRoundId(id);
+        return new RoundMatchIdsResponse(id, roundMatchIds);
     }
 }

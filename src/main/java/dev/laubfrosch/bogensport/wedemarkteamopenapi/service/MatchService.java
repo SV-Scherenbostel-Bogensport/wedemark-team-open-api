@@ -1,8 +1,10 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.MatchInfoDto;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Match;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Set;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.MatchRepository;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.SetRepository;
 import org.springframework.http.HttpStatus;
@@ -35,9 +37,34 @@ public class MatchService {
 
     // Match nach ID finden und mit Sets ausgeben
     public MatchInfoDto getMatchWithSets(Integer id) {
-        Match match = matchRepository.findById(id)
+
+        Match match = matchRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Match nicht gefunden mit ID: " + id));
+
         List<Set> sets = setRepository.findByMatchIdOrderBySetIndex(id);
-        return new MatchInfoDto(match, sets);
+
+        TeamDto team1 = match.getTeam1() != null
+                ? new TeamDto(match.getTeam1().getTeamId(), match.getTeam1().getName())
+                : null;
+
+        TeamDto team2 = match.getTeam2() != null
+                ? new TeamDto(match.getTeam2().getTeamId(), match.getTeam2().getName())
+                : null;
+
+        String target1Code = match.getTarget1() != null ? match.getTarget1().getCode() : null;
+        String target2Code = match.getTarget2() != null ? match.getTarget2().getCode() : null;
+
+        return new MatchInfoDto(
+            match.getMatchId(),
+            match.getDescription(),
+            team1,
+            team2,
+            match.getWinnerTeamId(),
+            target1Code,
+            target2Code,
+            match.getRound().getIsKnockOut(),
+            match.getStatus(),
+            sets
+        );
     }
 }

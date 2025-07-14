@@ -35,7 +35,7 @@ public class MatchController {
         return ResponseEntity.ok(match);
     }
 
-    @GetMapping("/{id}/sets")
+    @GetMapping("/{id}/info")
     public ResponseEntity<MatchInfoDto> getMatchWithSets(@PathVariable Integer id) {
         MatchInfoDto match = matchService.getMatchWithSets(id);
         return ResponseEntity.ok(match);

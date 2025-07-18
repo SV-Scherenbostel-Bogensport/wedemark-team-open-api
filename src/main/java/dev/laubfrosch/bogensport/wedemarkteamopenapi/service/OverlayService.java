@@ -29,26 +29,32 @@ public class OverlayService {
     public TeamNameResponse getTeamNameByTargetCode(String targetCode) {
 
         Target target = targetRepository.findByCode(targetCode)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Target nicht gefunden mit Code: " + targetCode));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Scheibe mit Code '" + targetCode + "' existiert nicht"));
 
         Match match = matchRepository.findActiveMatchByTargetId(target.getTargetId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Kein aktives Match auf Target " + targetCode + " gefunden"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Auf Scheibe " + targetCode + " läuft kein Match"));
 
+        Integer teamId = getTeamIdByMatchAndTarget(match, target);
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Mannschaft mit ID '" + teamId + "' nicht gefunden"));
+
+        return new TeamNameResponse(team.getName());
+    }
+
+    private Integer getTeamIdByMatchAndTarget(Match match, Target target) {
         Integer teamId;
 
-        if (Objects.equals(match.getTarget1(), target)) {
+        if (Objects.equals(match.getTarget1(), target) && match.getTeam1Id() != null) {
             teamId = match.getTeam1Id();
 
-        } else if (Objects.equals(match.getTarget2(), target)) {
+        } else if (Objects.equals(match.getTarget2(), target) && match.getTeam2Id() != null) {
             teamId = match.getTeam2Id();
 
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Auf Target" + targetCode + " ist kein Team platziert");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Auf Scheibe " + target.getCode() + " ist kein Team platziert");
         }
 
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team nicht gefunden mit ID: " + teamId));
-
-        return new TeamNameResponse(team.getName());
+        return teamId;
     }
 }

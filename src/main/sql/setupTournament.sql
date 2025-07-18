@@ -122,7 +122,7 @@ VALUES
     (10, 2, '[Ko11] Losers Bracket: Spiel um Platz 7 & 8: L-Ko8 vs L-Ko5', null, null, null, 3, 4),
 
     (11, 2, '[Ko12] Winners Bracket: W-Ko7 vs W-Ko6', null, null, null, 1, 2),
-    (11, 2, '[Ko13] Losers Bracket: W-Ko9 vs W-Ko10', null, null, null, 5, 6),
+    (11, 2, '[Ko13] Losers Bracket: Spiel um Platz 4: W-Ko9 vs W-Ko10', null, null, null, 5, 6),
     (11, 2, '[Ko14] Losers Bracket: Spiel um Platz 5 & 6: L-Ko9 vs L-Ko10', null, null, null, 3, 4),
 
     (12, 2, '[Ko15] Losers Bracket: Spiel um Platz 3: W-Ko13 vs L-Ko12', null, null, null, 3, 4),

@@ -4,7 +4,6 @@ import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.MatchInfoDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.TeamDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Match;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Set;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.MatchRepository;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.SetRepository;
 import org.springframework.http.HttpStatus;

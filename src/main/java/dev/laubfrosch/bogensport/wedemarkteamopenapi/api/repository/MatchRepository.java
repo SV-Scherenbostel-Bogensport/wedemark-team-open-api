@@ -24,4 +24,7 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
             "LEFT JOIN FETCH m.target2 " +
             "WHERE m.matchId = :id")
     Optional<Match> findByIdWithDetails(Integer id);
+
+    @Query("SELECT m FROM Match m WHERE (m.target1.targetId = :targetId OR m.target2.targetId = :targetId) AND m.status.statusId = 3")
+    Optional<Match> findActiveMatchByTargetId(@Param("targetId") Integer targetId);  // Status ID=3 => ONGOING
 }

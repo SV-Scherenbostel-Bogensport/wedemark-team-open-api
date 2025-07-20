@@ -1,4 +1,4 @@
-package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
+package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Set;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.SetRepository;

@@ -2,7 +2,7 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.CountDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Player;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.PlayerService;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.PlayerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

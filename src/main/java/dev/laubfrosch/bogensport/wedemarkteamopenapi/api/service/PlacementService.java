@@ -1,4 +1,4 @@
-package dev.laubfrosch.bogensport.wedemarkteamopenapi.service;
+package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.FinalPlacementDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.PointsDto;

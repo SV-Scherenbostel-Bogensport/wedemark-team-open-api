@@ -2,7 +2,7 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.FinalPlacementDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.QualificationPlacementDto;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.PlacementService;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.PlacementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

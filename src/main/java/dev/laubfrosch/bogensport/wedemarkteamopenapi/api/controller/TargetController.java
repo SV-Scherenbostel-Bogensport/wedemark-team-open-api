@@ -1,7 +1,7 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Target;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.TargetService;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.TargetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -2,7 +2,7 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.MatchInfoDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Match;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.MatchService;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.MatchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

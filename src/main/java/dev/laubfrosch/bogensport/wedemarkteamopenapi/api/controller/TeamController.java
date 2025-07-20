@@ -5,7 +5,7 @@ import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.GetTeamIdsDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.AttendeesDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.PlayersByTeamDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Team;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.service.TeamService;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.TeamService;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

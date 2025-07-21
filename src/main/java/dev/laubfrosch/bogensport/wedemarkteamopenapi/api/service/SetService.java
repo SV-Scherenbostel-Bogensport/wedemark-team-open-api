@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SetService {
@@ -46,6 +48,16 @@ public class SetService {
             set.setSetId(null);
             return setRepository.save(set);
         }
+    }
+
+    // Mehrere Sets erstellen oder bestehenden bearbeiten
+    public List<Set> upsertSets(List<Set> sets) {
+        if (sets == null || sets.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return sets.stream()
+                .map(this::upsertSet)
+                .collect(Collectors.toList());
     }
 
     //Set löschen

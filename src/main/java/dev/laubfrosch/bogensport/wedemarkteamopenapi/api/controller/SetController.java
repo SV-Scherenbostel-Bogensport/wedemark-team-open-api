@@ -5,6 +5,7 @@ import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.SetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -40,6 +41,15 @@ public class SetController {
         Set saveSet = setService.upsertSet(set);
         return ResponseEntity.ok(saveSet);
     }
+
+    // PUT /api/sets/batch - Mehrere Sets hinzufügen oder aktualisieren
+    @PutMapping("/batch")
+    public ResponseEntity<List<Set>> upsertSets(@RequestBody List<Set> sets) {
+        List<Set> savedSets = setService.upsertSets(sets);
+        return ResponseEntity.ok(savedSets);
+    }
+
+
 
     // DELETE /api/sets/{id} - Set löschen
     @DeleteMapping("/{id}")

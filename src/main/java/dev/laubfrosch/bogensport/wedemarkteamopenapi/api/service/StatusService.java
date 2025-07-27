@@ -2,6 +2,7 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Status;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.StatusRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,7 +20,7 @@ public class StatusService {
 
     // Alle Status laden
     public List<Status> getAllStatus() {
-        return statusRepository.findAll();
+        return statusRepository.findAll(Sort.by("statusId"));
     }
 
     // Status nach ID finden

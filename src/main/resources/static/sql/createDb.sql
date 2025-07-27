@@ -38,7 +38,6 @@ CREATE TABLE players (
 -- Rounds
 CREATE TABLE rounds (
     round_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    status_id INT NOT NULL REFERENCES status(status_id),
     description TEXT,
     is_knock_out BOOLEAN NOT NULL DEFAULT FALSE,
     updated_at TIMESTAMP

@@ -23,11 +23,6 @@ public class Round {
     @Column(name = "status_id", nullable = false)
     private Integer statusId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "status_id", referencedColumnName = "status_id", nullable = false, insertable = false, updatable = false)
-    @JsonIgnore
-    private Status status;
-
     @Column(columnDefinition = "TEXT")
     private String description;
 

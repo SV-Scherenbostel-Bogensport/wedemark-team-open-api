@@ -40,7 +40,6 @@ entity "players" as players #adb0ff {
 
 entity "rounds" as rounds #ffa1a3 {
     round_id: number <<PK>>
-    status_id: number -- FK → status.status_id
     --
     description: text
     is_knock_out: boolean

@@ -55,4 +55,11 @@ public class RoundController {
         RoundMatchIdsResponse matches = roundService.getAllRoundMatchIds(id);
         return ResponseEntity.ok(matches);
     }
+
+    // GET /api/rounds/current - Aktive Runde laden
+    @GetMapping("/current")
+    public ResponseEntity<Round> getCurrentRound() {
+        Round currentRound = roundService.getActiveNextOrLastRound();
+        return ResponseEntity.ok(currentRound);
+    }
 }

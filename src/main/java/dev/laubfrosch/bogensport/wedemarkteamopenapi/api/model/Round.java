@@ -20,9 +20,6 @@ public class Round {
     @Column(name = "round_id")
     private Integer roundId;
 
-    @Column(name = "status_id", nullable = false)
-    private Integer statusId;
-
     @Column(columnDefinition = "TEXT")
     private String description;
 

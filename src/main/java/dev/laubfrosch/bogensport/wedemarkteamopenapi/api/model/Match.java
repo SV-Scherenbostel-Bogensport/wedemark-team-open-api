@@ -29,7 +29,7 @@ public class Match {
     private Round round;
 
     @Column(name = "status_id", nullable = false)
-    private Integer StatusId;
+    private Integer statusId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id", referencedColumnName = "status_id", nullable = false, insertable = false, updatable = false)
@@ -40,7 +40,7 @@ public class Match {
     private String description;
 
     @Column(name = "team1_id")
-    private Integer Team1Id;
+    private Integer team1Id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team1_id", referencedColumnName = "team_id", insertable = false, updatable = false)
@@ -48,23 +48,15 @@ public class Match {
     private Team team1;
 
     @Column(name = "team2_id")
-    private Integer Team2Id;
+    private Integer team2Id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team2_id", referencedColumnName = "team_id", insertable = false, updatable = false)
     @JsonIgnore
     private Team team2;
 
-    @Column(name = "winner_team_id")
-    private Integer WinnerTeamId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "winner_team_id", referencedColumnName = "team_id", insertable = false, updatable = false)
-    @JsonIgnore
-    private Team winnerTeam;
-
     @Column(name = "target1_id")
-    private Integer Target1Id;
+    private Integer target1Id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "target1_id", referencedColumnName = "target_id", insertable = false, updatable = false)
@@ -72,7 +64,7 @@ public class Match {
     private Target target1;
 
     @Column(name = "target2_id")
-    private Integer Target2Id;
+    private Integer target2Id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "target2_id", referencedColumnName = "target_id", insertable = false, updatable = false)

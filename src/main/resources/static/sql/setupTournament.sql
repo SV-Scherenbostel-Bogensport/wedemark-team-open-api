@@ -50,22 +50,22 @@ VALUES
 
 -- Rounds
 INSERT INTO rounds
-    (status_id, description, is_knock_out)
+    (description, is_knock_out)
 VALUES
-    (2, '1. Qualifikationsrunde', false),
-    (2, '2. Qualifikationsrunde', false),
-    (2, '3. Qualifikationsrunde', false),
-    (2, '4. Qualifikationsrunde', false),
-    (2, '5. Qualifikationsrunde', false),
-    (2, '6. Qualifikationsrunde', false),
-    (2, '7. Qualifikationsrunde', false),
-    (2, '1. Finalrunde', true),
-    (2, '2. Finalrunde', true),
-    (2, '3. Finalrunde', true),
-    (2, '4. Finalrunde', true),
-    (2, '5. Finalrunde', true),
-    (2, '6. Finalrunde', true),
-    (2, '7. Finalrunde', true);
+    ('1. Qualifikationsrunde', false),
+    ('2. Qualifikationsrunde', false),
+    ('3. Qualifikationsrunde', false),
+    ('4. Qualifikationsrunde', false),
+    ('5. Qualifikationsrunde', false),
+    ('6. Qualifikationsrunde', false),
+    ('7. Qualifikationsrunde', false),
+    ('1. Finalrunde', true),
+    ('2. Finalrunde', true),
+    ('3. Finalrunde', true),
+    ('4. Finalrunde', true),
+    ('5. Finalrunde', true),
+    ('6. Finalrunde', true),
+    ('7. Finalrunde', true);
 
 
 -- Matches

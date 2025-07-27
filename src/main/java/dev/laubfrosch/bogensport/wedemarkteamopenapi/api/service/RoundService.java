@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RoundService {
@@ -51,5 +52,34 @@ public class RoundService {
 
         List<Integer> roundMatchIds = matchRepository.findMatchIdsByRoundId(id);
         return new RoundMatchIdsResponse(id, roundMatchIds);
+    }
+
+    // Aktuelle Runde ermitteln
+    public Round getActiveNextOrLastRound() {
+
+        Optional<Integer> roundId;
+
+        // Aktive Runde ermitteln
+        roundId = roundRepository.findActiveRound();
+        if (roundId.isPresent()) {
+            return roundRepository.findById(roundId.get())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.GONE));
+        }
+
+        //Fallback, falls keine aktive Runde: Nächste anstehende Runde ermitteln
+        roundId = roundRepository.findNextActiveRound();
+        if (roundId.isPresent()) {
+            return roundRepository.findById(roundId.get())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.GONE));
+        }
+
+        //Fallback, falls keine anstehende Runde: Letzte beendete Runde ermitteln
+        roundId = roundRepository.findLastActiveRound();
+        if (roundId.isPresent()) {
+            return roundRepository.findById(roundId.get())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.GONE));
+        }
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 }

@@ -58,7 +58,6 @@ public class MatchService {
             match.getDescription(),
             team1,
             team2,
-            match.getWinnerTeamId(),
             target1Code,
             target2Code,
             match.getRound().getIsKnockOut(),

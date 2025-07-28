@@ -28,7 +28,7 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
             "WHERE m.matchId = :id")
     Optional<Match> findByIdWithDetails(Integer id);
 
-    @Query("SELECT m FROM Match m WHERE (m.target1.targetId = :targetId OR m.target2.targetId = :targetId) AND m.status.label IN ('ONGOING','PAUSED')")
+    @Query("SELECT m FROM Match m WHERE (m.target1.targetId = :targetId OR m.target2.targetId = :targetId) AND m.status.label IN ('ONGOING','PAUSED') ORDER BY m.matchId LIMIT 1 ")
     Optional<Match> findActiveMatchByTargetId(@Param("targetId") Integer targetId);
 
     @Query("SELECT m.status FROM Match m WHERE m.round = :round AND (m.target1 = :target OR m.target2 = :target)")

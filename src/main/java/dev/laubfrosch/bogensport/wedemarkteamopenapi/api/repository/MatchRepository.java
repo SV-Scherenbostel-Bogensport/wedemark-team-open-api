@@ -1,9 +1,6 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Match;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Round;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Status;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Target;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,10 +24,4 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
             "LEFT JOIN FETCH m.target2 " +
             "WHERE m.matchId = :id")
     Optional<Match> findByIdWithDetails(Integer id);
-
-    @Query("SELECT m FROM Match m WHERE (m.target1.targetId = :targetId OR m.target2.targetId = :targetId) AND m.status.label IN ('ONGOING','PAUSED') ORDER BY m.matchId LIMIT 1 ")
-    Optional<Match> findActiveMatchByTargetId(@Param("targetId") Integer targetId);
-
-    @Query("SELECT m.status FROM Match m WHERE m.round = :round AND (m.target1 = :target OR m.target2 = :target)")
-    Optional<Status> findStatusByRoundAndTarget(Round round, Target target);
 }

@@ -1,6 +1,5 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository;
 
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.GetTeamIdsDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Round;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +23,10 @@ public interface RoundRepository extends JpaRepository<Round, Integer> {
 
     @Query("SELECT m.roundId FROM Match m INNER JOIN Status s ON s.statusId = m.statusId WHERE s.label in ('ENDED', 'CANCELED') ORDER BY m.roundId ASC LIMIT 1")
     Optional<Integer> findLastActiveRound();
+
+    @Query("SELECT r FROM Match m INNER JOIN Status s ON s.statusId = m.statusId INNER JOIN Round r ON r.roundId = m.roundId WHERE s.label in ('ENDED', 'CANCELED') AND r.isKnockOut = false ORDER BY r.roundId ASC LIMIT 1")
+    Optional<Round> getLastActiveQualificationRound();
+
+    @Query("SELECT r FROM Match m INNER JOIN Status s ON s.statusId = m.statusId INNER JOIN Round r ON r.roundId = m.roundId WHERE s.label in ('ENDED', 'CANCELED') AND r.isKnockOut = true ORDER BY r.roundId ASC LIMIT 1")
+    Optional<Round> getLastActiveFinalRound();
 }

@@ -1,7 +1,9 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.FinalPlacementDto;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.FinalPlacementResponse;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.QualificationPlacementDto;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.QualificationPlacementResponse;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.PlacementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,15 +24,15 @@ public class PlacementController {
 
     // GET /api/placement/qualification - Die Platzierung
     @GetMapping("qualification")
-    public ResponseEntity<List<QualificationPlacementDto>> getQualificationPlacement() {
-        List<QualificationPlacementDto> placement = placementService.getQualificationPlacement();
+    public ResponseEntity<QualificationPlacementResponse> getQualificationPlacement() {
+        QualificationPlacementResponse placement = placementService.getQualificationPlacement();
         return ResponseEntity.ok(placement);
     }
 
     // GET /api/placement/final
     @GetMapping("final")
-    public ResponseEntity<List<FinalPlacementDto>> getFinalPlacement() {
-        List<FinalPlacementDto> placement = placementService.getFinalPlacement();
+    public ResponseEntity<FinalPlacementResponse> getFinalPlacement() {
+        FinalPlacementResponse placement = placementService.getFinalPlacement();
         return ResponseEntity.ok(placement);
     }
 }

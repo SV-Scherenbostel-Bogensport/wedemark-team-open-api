@@ -51,7 +51,6 @@ CREATE TABLE matches (
     description TEXT,
     team1_id INT REFERENCES teams(team_id),
     team2_id INT REFERENCES teams(team_id),
-    winner_team_id INT REFERENCES teams(team_id),
     target1_id INT REFERENCES targets(target_id),
     target2_id INT REFERENCES targets(target_id),
     updated_at TIMESTAMP

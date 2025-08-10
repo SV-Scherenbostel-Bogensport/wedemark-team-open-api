@@ -8,6 +8,6 @@ public record QualificationPlacementDto(
         TeamDto team,
         PointsDto totalMatchPoints,
         PointsDto totalSetPoints,
-        Float AverageSetScore
+        Float averageSetScore
 ) {
 }

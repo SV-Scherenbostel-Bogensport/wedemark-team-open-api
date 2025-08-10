@@ -111,3 +111,24 @@ CREATE TRIGGER trg_sets_updated_at
     BEFORE UPDATE ON sets
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
+
+-- Views
+CREATE VIEW round_overview AS
+SELECT
+    round_id,
+    COUNT(*) as total_matches,
+    COUNT(CASE WHEN status_id = 2 THEN 1 END) as upcoming_matches,
+    COUNT(CASE WHEN status_id IN (3, 4) THEN 1 END) as active_matches,
+    COUNT(CASE WHEN status_id IN (5, 6) THEN 1 END) as finished_matches,
+    CASE
+        WHEN COUNT(CASE WHEN status_id = 5 THEN 1 END) = COUNT(*) THEN 5
+        WHEN COUNT(CASE WHEN status_id IN (5, 6) THEN 1 END) = COUNT(*) THEN 6
+        WHEN COUNT(CASE WHEN status_id = 3 THEN 1 END) > 0 THEN 3
+        WHEN COUNT(CASE WHEN status_id = 4 THEN 1 END) > 0 THEN 4
+        WHEN COUNT(CASE WHEN status_id = 2 THEN 1 END) > 0 THEN 2
+        ELSE MAX(m.status_id)
+        END as round_status,
+    MAX(m.updated_at) as updated_at
+FROM matches m
+GROUP BY round_id
+ORDER BY round_id;

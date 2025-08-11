@@ -13,12 +13,7 @@ import jakarta.persistence.Query;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
@@ -26,6 +21,7 @@ import static java.lang.Math.max;
 @Service
 public class PlacementService {
 
+    private static final int MAX_LIVES = 2;
     private final EntityManager entityManager;
     private final RoundRepository roundRepository;
 
@@ -34,204 +30,213 @@ public class PlacementService {
         this.roundRepository = roundRepository;
     }
 
-    public QualificationPlacementResponse getQualificationPlacement(){
-
+    public QualificationPlacementResponse getQualificationPlacement() {
         Optional<Round> round = roundRepository.getLastFinishedQualificationRound();
+        List<QualificationPlacementDto> placements = loadQualificationPlacements(round);
+        assignQualificationPlacementsAndJustifications(placements);
+        return new QualificationPlacementResponse(round.orElse(null), placements);
+    }
 
-        String sql;
+    public FinalPlacementResponse getFinalPlacement() {
+        Optional<Round> round = roundRepository.getLastFinishedFinalRound();
 
-        try {
-            sql = SqlFileReader.getSqlQueryFromFile("src/main/resources/static/sql/api/getQualificationPlacementData.sql");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (round.isEmpty() && !roundRepository.hasQualificationFinished().orElse(false)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Es existiert noch kein Leaderboard für die Finalrunde");
         }
 
+        Map<Integer, Integer> qualificationPlacements = getQualificationPlacementsMap();
+        List<FinalPlacementDto> placements = loadFinalPlacements(round, qualificationPlacements);
+        assignFinalPlacementsAndJustifications(placements);
+
+        return new FinalPlacementResponse(round.orElse(null), placements);
+    }
+
+    private List<QualificationPlacementDto> loadQualificationPlacements(Optional<Round> round) {
+        String sql = loadSqlFile("getQualificationPlacementData.sql");
         Query query = entityManager.createNativeQuery(sql);
-        query.setParameter("roundId", round.isPresent() ? round.get().getRoundId() : 0);
+        query.setParameter("roundId", round.map(Round::getRoundId).orElse(0));
 
         @SuppressWarnings("unchecked")
         List<Object[]> results = query.getResultList();
 
-        List<QualificationPlacementDto> placements = new ArrayList<>();
-
-        for (Object[] result : results) {
-
-            TeamDto team = new TeamDto(
-                    ((Number) result[0]).intValue(),
-                    result[1].toString()
-            );
-
-            PointsDto totalMatchPoints = new PointsDto(
-                    ((Number) result[2]).intValue(), // Long -> Integer
-                    ((Number) result[3]).intValue()  // Long -> Integer
-            );
-
-            PointsDto totalSetPoints = new PointsDto(
-                    ((Number) result[4]).intValue(), // Long -> Integer
-                    ((Number) result[5]).intValue()  // Long -> Integer
-            );
-
-            float averageSetScore = ((Number) result[8]).floatValue();
-
-            QualificationPlacementDto placement = new QualificationPlacementDto(
-                    null,
-                    PlacementJustification.UNKNOWN,
-                    team,
-                    totalMatchPoints,
-                    totalSetPoints,
-                    averageSetScore
-            );
-
-            placements.add(placement);
-        }
-        
-        this.assignQualificationPlacementsAndJustifications(placements);
-        return new QualificationPlacementResponse(round.orElse(null), placements);
+        return results.stream()
+                .map(this::mapToQualificationPlacement)
+                .collect(Collectors.toList());
     }
+
+    private List<FinalPlacementDto> loadFinalPlacements(Optional<Round> round, Map<Integer, Integer> qualificationPlacements) {
+        String sql = loadSqlFile("getFinalPlacementData.sql");
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("roundId", round.map(Round::getRoundId).orElse(0));
+
+        @SuppressWarnings("unchecked")
+        List<Object[]> results = query.getResultList();
+
+        return results.stream()
+                .map(result -> mapToFinalPlacement(result, qualificationPlacements))
+                .collect(Collectors.toList());
+    }
+
+    private QualificationPlacementDto mapToQualificationPlacement(Object[] result) {
+        PlacementData data = extractPlacementData(result);
+
+        return new QualificationPlacementDto(
+                null,
+                PlacementJustification.UNKNOWN,
+                data.team(),
+                data.totalMatchPoints(),
+                data.totalSetPoints(),
+                data.averageSetScore()
+        );
+    }
+
+    private FinalPlacementDto mapToFinalPlacement(Object[] result, Map<Integer, Integer> qualificationPlacements) {
+        PlacementData data = extractPlacementData(result);
+        Integer qualificationPlace = qualificationPlacements.get(data.team().teamId());
+        int lives = max(MAX_LIVES - data.totalMatchPoints().lost() / 2, 0);
+
+        return new FinalPlacementDto(
+                null,
+                PlacementJustification.UNKNOWN,
+                qualificationPlace,
+                data.team(),
+                data.totalMatchPoints(),
+                data.totalSetPoints(),
+                data.averageSetScore(),
+                lives
+        );
+    }
+
+    private PlacementData extractPlacementData(Object[] result) {
+        TeamDto team = new TeamDto(
+                ((Number) result[0]).intValue(),
+                result[1].toString()
+        );
+
+        PointsDto totalMatchPoints = new PointsDto(
+                ((Number) result[2]).intValue(),
+                ((Number) result[3]).intValue()
+        );
+
+        PointsDto totalSetPoints = new PointsDto(
+                ((Number) result[4]).intValue(),
+                ((Number) result[5]).intValue()
+        );
+
+        float averageSetScore = ((Number) result[8]).floatValue();
+
+        return new PlacementData(team, totalMatchPoints, totalSetPoints, averageSetScore);
+    }
+
+    private record PlacementData(
+            TeamDto team,
+            PointsDto totalMatchPoints,
+            PointsDto totalSetPoints,
+            float averageSetScore
+    ) {}
 
     private void assignQualificationPlacementsAndJustifications(List<QualificationPlacementDto> placements) {
         int currentPlace = 1;
 
         for (int i = 0; i < placements.size(); i++) {
             QualificationPlacementDto current = placements.get(i);
-            PlacementJustification justification = PlacementJustification.UNKNOWN;
 
-            // Prüfe, ob es Gleichstände gibt
             if (i > 0) {
                 QualificationPlacementDto previous = placements.get(i - 1);
 
-                // Gleiche Matchpunkte?
-                if (current.getTotalMatchPoints().won().equals(previous.getTotalMatchPoints().won())) {
-
-                    // Gleiche Satzdifferenz?
-                    int currentSetDiff = current.getTotalSetPoints().won() - current.getTotalSetPoints().lost();
-                    int previousSetDiff = previous.getTotalSetPoints().won() - previous.getTotalSetPoints().lost();
-
-                    if (currentSetDiff == previousSetDiff) {
-                        currentPlace = previous.getPlace();
-                    }
-                } else {
+                if (!hasSameQualificationRanking(current, previous)) {
                     currentPlace = i + 1;
                 }
             }
 
-            placements.get(i).setPlace(currentPlace);
-            placements.get(i).setJustification(justification);
+            current.setPlace(currentPlace);
+            current.setJustification(PlacementJustification.UNKNOWN);
         }
     }
 
-
-    public FinalPlacementResponse getFinalPlacement() {
-        Optional<Round> round = roundRepository.getLastFinishedFinalRound();
-
-        if (round.isEmpty()) {
-            if (!roundRepository.hasQualificationFinished().orElse(false)) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Es existiert noch kein Leaderboard für die Finalrunde");
-            }
-            // Mit Round.isEmpty wird jetzt einfach eine Startliste geladen.
+    private boolean hasSameQualificationRanking(QualificationPlacementDto current, QualificationPlacementDto previous) {
+        // Gleiche Matchpunkte?
+        if (!current.getTotalMatchPoints().won().equals(previous.getTotalMatchPoints().won())) {
+            return false;
         }
 
-        Map<Integer, Integer> qualificationPlacements = getQualificationPlacementsMap();
+        // Gleiche Satzdifferenz?
+        int currentSetDiff = current.getTotalSetPoints().won() - current.getTotalSetPoints().lost();
+        int previousSetDiff = previous.getTotalSetPoints().won() - previous.getTotalSetPoints().lost();
 
-        String sql;
-
-        try {
-            sql = SqlFileReader.getSqlQueryFromFile("src/main/resources/static/sql/api/getFinalPlacementData.sql");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter("roundId", round.isPresent() ? round.get().getRoundId() : 0);
-
-        @SuppressWarnings("unchecked")
-        List<Object[]> results = query.getResultList();
-
-        List<FinalPlacementDto> placements = new ArrayList<>();
-
-        for (Object[] result : results) {
-
-            TeamDto team = new TeamDto(
-                    ((Number) result[0]).intValue(),
-                    result[1].toString()
-            );
-
-            PointsDto totalMatchPoints = new PointsDto(
-                    ((Number) result[2]).intValue(), // Long -> Integer
-                    ((Number) result[3]).intValue()  // Long -> Integer
-            );
-
-            PointsDto totalSetPoints = new PointsDto(
-                    ((Number) result[4]).intValue(), // Long -> Integer
-                    ((Number) result[5]).intValue()  // Long -> Integer
-            );
-
-            float averageSetScore = ((Number) result[8]).floatValue();
-
-            Integer qualificationPlace = qualificationPlacements.get(team.teamId());
-
-            int MAX_LIVES = 2;
-            FinalPlacementDto placement = new FinalPlacementDto(
-                    null,
-                    PlacementJustification.UNKNOWN,
-                    qualificationPlace,
-                    team,
-                    totalMatchPoints,
-                    totalSetPoints,
-                    averageSetScore,
-                    max(MAX_LIVES - totalMatchPoints.lost()/2, 0)
-            );
-
-            placements.add(placement);
-        }
-
-        this.assignFinalPlacementsAndJustifications(placements);
-        return new FinalPlacementResponse(round.orElse(null), placements);
+        return currentSetDiff == previousSetDiff;
     }
 
     private void assignFinalPlacementsAndJustifications(List<FinalPlacementDto> placements) {
-        String sql;
-        try {
-            sql = SqlFileReader.getSqlQueryFromFile("src/main/resources/static/sql/api/getFinalPlacement.sql");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        Map<Integer, Integer> finalPlacementsFromDb = loadFinalPlacementsFromDatabase();
+
+        // Plätze aus der Datenbank zuweisen
+        for (FinalPlacementDto placement : placements) {
+            Integer place = finalPlacementsFromDb.get(placement.getTeam().teamId());
+            if (place != null) {
+                placement.setPlace(place);
+            }
         }
 
+        // Sortierung: Platzierte zuerst, dann unplatzierte in ursprünglicher Reihenfolge
+        List<FinalPlacementDto> sortedPlacements = new ArrayList<>();
+
+        // Erst die platzierten Teams, sortiert nach Platz
+        placements.stream()
+                .filter(p -> p.getPlace() != null)
+                .sorted(Comparator.comparing(FinalPlacementDto::getPlace))
+                .forEach(sortedPlacements::add);
+
+        // Dann die unplatzierten Teams in ursprünglicher Reihenfolge
+        // sortiert nach Leben → Satzpunkten → Qualifikationsplatz
+        placements.stream()
+                .filter(p -> p.getPlace() == null)
+                .sorted(this::compareFinalPlacementsForTieBreaker)
+                .forEach(sortedPlacements::add);
+
+        placements.clear();
+        placements.addAll(sortedPlacements);
+    }
+
+    private int compareFinalPlacementsForTieBreaker(FinalPlacementDto dto1, FinalPlacementDto dto2) {
+        // 1. Leben (mehr ist besser)
+        int livesComparison = Integer.compare(dto2.getLives(), dto1.getLives());
+        if (livesComparison != 0) {
+            return livesComparison;
+        }
+
+        // 2. Satzpunktedifferenz (höher ist besser)
+        int setDiff1 = dto1.getTotalSetPoints().won() - dto1.getTotalSetPoints().lost();
+        int setDiff2 = dto2.getTotalSetPoints().won() - dto2.getTotalSetPoints().lost();
+        int setDiffComparison = Integer.compare(setDiff2, setDiff1);
+        if (setDiffComparison != 0) {
+            return setDiffComparison;
+        }
+
+        // 3. Qualifikationsplatz (niedriger ist besser)
+        if (dto1.getQualificationPlace() != null && dto2.getQualificationPlace() != null) {
+            return Integer.compare(dto1.getQualificationPlace(), dto2.getQualificationPlace());
+        }
+
+        // Falls einer null ist, den mit Wert bevorzugen
+        if (dto1.getQualificationPlace() != null) return -1;
+        if (dto2.getQualificationPlace() != null) return 1;
+
+        return 0;
+    }
+
+    private Map<Integer, Integer> loadFinalPlacementsFromDatabase() {
+        String sql = loadSqlFile("getFinalPlacement.sql");
         Query query = entityManager.createNativeQuery(sql);
 
         @SuppressWarnings("unchecked")
         List<Object[]> results = query.getResultList();
 
-        Map<Integer, FinalPlacementDto> placementMap = placements.stream()
-                .collect(Collectors.toMap(p -> p.getTeam().teamId(), p -> p));
-
-        for (Object[] result : results) {
-            Integer teamIdFromDb = ((Number) result[1]).intValue();
-            int placeFromDb = ((Number) result[0]).intValue();
-
-            FinalPlacementDto dto = placementMap.get(teamIdFromDb);
-            if (dto != null) {
-                dto.setPlace(placeFromDb);
-            }
-        }
-
-        AtomicInteger index = new AtomicInteger(0);
-        Map<FinalPlacementDto, Integer> originalIndices = placements.stream()
-                .collect(Collectors.toMap(Function.identity(), p -> index.getAndIncrement()));
-
-        placements.sort((dto1, dto2) -> {
-            Integer place1 = dto1.getPlace();
-            Integer place2 = dto2.getPlace();
-
-            if (place1 == null && place2 == null) {
-                return Integer.compare(originalIndices.get(dto1), originalIndices.get(dto2));
-            }
-            if (place1 == null) return -1;
-            if (place2 == null) return 1;
-            return place1.compareTo(place2);
-        });
-
-        // TODO: Falls für ein placement Platz -> leben -> satzpunkte gleich ist, soll als lletztes kriterium noch nach quali platzierung sortiert werden
+        return results.stream()
+                .collect(Collectors.toMap(
+                        result -> ((Number) result[1]).intValue(), // teamId
+                        result -> ((Number) result[0]).intValue()  // place
+                ));
     }
 
     private Map<Integer, Integer> getQualificationPlacementsMap() {
@@ -241,59 +246,21 @@ public class PlacementService {
             return Map.of();
         }
 
-        String sql;
-        try {
-            sql = SqlFileReader.getSqlQueryFromFile("src/main/resources/static/sql/api/getQualificationPlacementData.sql");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        List<QualificationPlacementDto> placements = loadQualificationPlacements(qualRound);
+        assignQualificationPlacementsAndJustifications(placements);
 
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter("roundId", qualRound.get().getRoundId());
-
-        @SuppressWarnings("unchecked")
-        List<Object[]> results = query.getResultList();
-
-        List<QualificationPlacementDto> placements = new ArrayList<>();
-
-        for (Object[] result : results) {
-            TeamDto team = new TeamDto(
-                    ((Number) result[0]).intValue(),
-                    result[1].toString()
-            );
-
-            PointsDto totalMatchPoints = new PointsDto(
-                    ((Number) result[2]).intValue(),
-                    ((Number) result[3]).intValue()
-            );
-
-            PointsDto totalSetPoints = new PointsDto(
-                    ((Number) result[4]).intValue(),
-                    ((Number) result[5]).intValue()
-            );
-
-            float averageSetScore = ((Number) result[8]).floatValue();
-
-            QualificationPlacementDto placement = new QualificationPlacementDto(
-                    null,
-                    PlacementJustification.UNKNOWN,
-                    team,
-                    totalMatchPoints,
-                    totalSetPoints,
-                    averageSetScore
-            );
-
-            placements.add(placement);
-        }
-
-        // Platzierungen zuweisen
-        this.assignQualificationPlacementsAndJustifications(placements);
-
-        // In eine Map umwandeln: TeamId -> Platzierung
         return placements.stream()
                 .collect(Collectors.toMap(
                         p -> p.getTeam().teamId(),
                         QualificationPlacementDto::getPlace
                 ));
+    }
+
+    private String loadSqlFile(String filename) {
+        try {
+            return SqlFileReader.getSqlQueryFromFile("src/main/resources/static/sql/api/" + filename);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load SQL file: " + filename, e);
+        }
     }
 }

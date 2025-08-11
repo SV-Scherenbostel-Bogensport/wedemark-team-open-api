@@ -39,8 +39,7 @@ CREATE TABLE players (
 CREATE TABLE rounds (
     round_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     description TEXT,
-    is_knock_out BOOLEAN NOT NULL DEFAULT FALSE,
-    updated_at TIMESTAMP
+    is_knock_out BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- Matches
@@ -115,20 +114,22 @@ CREATE TRIGGER trg_sets_updated_at
 -- Views
 CREATE VIEW round_overview AS
 SELECT
-    round_id,
+    m.round_id,
+    r.is_knock_out,
     COUNT(*) as total_matches,
-    COUNT(CASE WHEN status_id = 2 THEN 1 END) as upcoming_matches,
-    COUNT(CASE WHEN status_id IN (3, 4) THEN 1 END) as active_matches,
-    COUNT(CASE WHEN status_id IN (5, 6) THEN 1 END) as finished_matches,
+    COUNT(CASE WHEN m.status_id = 2 THEN 1 END) as upcoming_matches,
+    COUNT(CASE WHEN m.status_id IN (3, 4) THEN 1 END) as active_matches,
+    COUNT(CASE WHEN m.status_id IN (5, 6) THEN 1 END) as finished_matches,
     CASE
-        WHEN COUNT(CASE WHEN status_id = 5 THEN 1 END) = COUNT(*) THEN 5
-        WHEN COUNT(CASE WHEN status_id IN (5, 6) THEN 1 END) = COUNT(*) THEN 6
-        WHEN COUNT(CASE WHEN status_id = 3 THEN 1 END) > 0 THEN 3
-        WHEN COUNT(CASE WHEN status_id = 4 THEN 1 END) > 0 THEN 4
-        WHEN COUNT(CASE WHEN status_id = 2 THEN 1 END) > 0 THEN 2
+        WHEN COUNT(CASE WHEN m.status_id = 5 THEN 1 END) = COUNT(*) THEN 5
+        WHEN COUNT(CASE WHEN m.status_id IN (5, 6) THEN 1 END) = COUNT(*) THEN 6
+        WHEN COUNT(CASE WHEN m.status_id = 3 THEN 1 END) > 0 THEN 3
+        WHEN COUNT(CASE WHEN m.status_id = 4 THEN 1 END) > 0 THEN 4
+        WHEN COUNT(CASE WHEN m.status_id = 2 THEN 1 END) > 0 THEN 2
         ELSE MAX(m.status_id)
-        END as round_status,
+        END as round_status_id,
     MAX(m.updated_at) as updated_at
 FROM matches m
-GROUP BY round_id
-ORDER BY round_id;
+         JOIN rounds r ON m.round_id = r.round_id
+GROUP BY m.round_id, r.is_knock_out
+ORDER BY m.round_id;

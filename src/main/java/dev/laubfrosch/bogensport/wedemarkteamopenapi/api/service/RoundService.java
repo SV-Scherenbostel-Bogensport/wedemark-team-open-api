@@ -57,26 +57,26 @@ public class RoundService {
     // Aktuelle Runde ermitteln
     public Round getActiveNextOrLastRound() {
 
-        Optional<Integer> roundId;
+        Optional<Round> round;
 
         // Aktive Runde ermitteln
-        roundId = roundRepository.findActiveRound();
-        if (roundId.isPresent()) {
-            return roundRepository.findById(roundId.get())
+        round = roundRepository.getCurrentRound();
+        if (round.isPresent()) {
+            return round
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.GONE));
         }
 
         //Fallback, falls keine aktive Runde: Nächste anstehende Runde ermitteln
-        roundId = roundRepository.findNextActiveRound();
-        if (roundId.isPresent()) {
-            return roundRepository.findById(roundId.get())
+        round = roundRepository.getNextUpcomingRound();
+        if (round.isPresent()) {
+            return round
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.GONE));
         }
 
         //Fallback, falls keine anstehende Runde: Letzte beendete Runde ermitteln
-        roundId = roundRepository.findLastActiveRound();
-        if (roundId.isPresent()) {
-            return roundRepository.findById(roundId.get())
+        round = roundRepository.getLastFinishedRound();
+        if (round.isPresent()) {
+            return round
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.GONE));
         }
 

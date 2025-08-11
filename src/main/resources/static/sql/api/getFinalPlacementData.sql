@@ -44,6 +44,7 @@ WITH match_points AS (
              LEFT JOIN matches m ON (t.team_id = m.team1_id OR t.team_id = m.team2_id)
         AND m.status_id IN (5, 6)
         AND m.round_id > 7
+        AND m.round_id <= :roundId
              LEFT JOIN sets s ON (m.match_id = s.match_id AND s.set_index <= 5)
     GROUP BY t.team_id, t.name, m.match_id, m.team1_id, m.team2_id
 )

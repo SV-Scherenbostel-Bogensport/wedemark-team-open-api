@@ -15,18 +15,25 @@ public interface RoundRepository extends JpaRepository<Round, Integer> {
 
     List<Round> findByIsKnockOutTrue();
 
-    @Query("SELECT m.roundId FROM Match m INNER JOIN Status s ON s.statusId = m.statusId WHERE s.label in ('ONGOING', 'PAUSED') ORDER BY m.roundId LIMIT 1")
-    Optional<Integer> findActiveRound();
 
-    @Query("SELECT m.roundId FROM Match m INNER JOIN Status s ON s.statusId = m.statusId WHERE s.label in ('UPCOMING') ORDER BY m.roundId LIMIT 1")
-    Optional<Integer> findNextActiveRound();
+    @Query("SELECT r FROM RoundOverview ro INNER JOIN Status s ON s.statusId = ro.statusId INNER JOIN Round r ON r.roundId = ro.roundId WHERE s.label in ('ONGOING', 'PAUSED') ORDER BY r.roundId ASC LIMIT 1")
+    Optional<Round> getCurrentRound();
 
-    @Query("SELECT m.roundId FROM Match m INNER JOIN Status s ON s.statusId = m.statusId WHERE s.label in ('ENDED', 'CANCELED') ORDER BY m.roundId ASC LIMIT 1")
-    Optional<Integer> findLastActiveRound();
 
-    @Query("SELECT r FROM Match m INNER JOIN Status s ON s.statusId = m.statusId INNER JOIN Round r ON r.roundId = m.roundId WHERE s.label in ('ENDED', 'CANCELED') AND r.isKnockOut = false ORDER BY r.roundId ASC LIMIT 1")
-    Optional<Round> getLastActiveQualificationRound();
+    @Query("SELECT r FROM RoundOverview ro INNER JOIN Status s ON s.statusId = ro.statusId INNER JOIN Round r ON r.roundId = ro.roundId WHERE s.label in ('UPCOMING') ORDER BY r.roundId ASC LIMIT 1")
+    Optional<Round> getNextUpcomingRound();
 
-    @Query("SELECT r FROM Match m INNER JOIN Status s ON s.statusId = m.statusId INNER JOIN Round r ON r.roundId = m.roundId WHERE s.label in ('ENDED', 'CANCELED') AND r.isKnockOut = true ORDER BY r.roundId ASC LIMIT 1")
-    Optional<Round> getLastActiveFinalRound();
+
+    @Query("SELECT r FROM RoundOverview ro INNER JOIN Status s ON s.statusId = ro.statusId INNER JOIN Round r ON r.roundId = ro.roundId WHERE s.label in ('ENDED', 'CANCELED') ORDER BY r.roundId DESC LIMIT 1")
+    Optional<Round> getLastFinishedRound();
+
+    @Query("SELECT r FROM RoundOverview ro INNER JOIN Status s ON s.statusId = ro.statusId INNER JOIN Round r ON r.roundId = ro.roundId WHERE s.label in ('ENDED', 'CANCELED') AND r.isKnockOut = false ORDER BY r.roundId DESC LIMIT 1")
+    Optional<Round> getLastFinishedQualificationRound();
+
+    @Query("SELECT r FROM RoundOverview ro INNER JOIN Status s ON s.statusId = ro.statusId INNER JOIN Round r ON r.roundId = ro.roundId WHERE s.label in ('ENDED', 'CANCELED') AND r.isKnockOut = true ORDER BY r.roundId DESC LIMIT 1")
+    Optional<Round> getLastFinishedFinalRound();
+
+
+    @Query("SELECT CASE WHEN COUNT(*) = COUNT(CASE WHEN s.label IN ('ENDED', 'CANCELED') THEN 1 END) THEN TRUE ELSE FALSE END AS is_qualification_finished FROM RoundOverview ro INNER JOIN Status s ON s.statusId = ro.statusId INNER JOIN Round r ON r.roundId = ro.roundId WHERE r.isKnockOut = FALSE")
+    Optional<Boolean> hasQualificationFinished();
 }

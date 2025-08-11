@@ -1,11 +1,13 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.JoinFormula;
 
 import java.time.LocalDateTime;
 
@@ -26,6 +28,14 @@ public class Round {
 
     @Column(name = "is_knock_out", nullable = false)
     private Boolean isKnockOut = false;
+
+    @Formula("(SELECT ro.round_status_id FROM round_overview ro WHERE ro.round_id = round_id)")
+    private Integer statusId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinFormula("(SELECT ro.round_status_id FROM round_overview ro WHERE ro.round_id = round_id)")
+    @JsonIgnore
+    private Status status;
 
     @Formula("(SELECT ro.updated_at FROM round_overview ro WHERE ro.round_id = round_id)")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

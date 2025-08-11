@@ -5,7 +5,7 @@ import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Round;
 import java.util.List;
 
 public record FinalPlacementResponse(
-        Round placementRound,
+        Round round,
         List<FinalPlacementDto> finalPlacements
 ) {
 }

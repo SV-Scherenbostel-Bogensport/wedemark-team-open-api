@@ -5,6 +5,7 @@ import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.*;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.StatusRepository;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.TargetRepository;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.TeamRepository;
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +46,10 @@ public class OverlayService {
 
         Round round = roundService.getActiveNextOrLastRound();
 
-        return statusRepository.findStatusByRoundAndTarget(round, target)
+        Status statusProxy  = statusRepository.findStatusByRoundAndTarget(round, target)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "In der '" + round.getDescription() + "' findet kein Match auf Scheibe '" + targetCode + "' statt"));
+
+        return  (Status) Hibernate.unproxy(statusProxy);
     }
 }

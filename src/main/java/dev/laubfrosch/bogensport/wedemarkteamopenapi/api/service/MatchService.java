@@ -10,7 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MatchService {
@@ -64,5 +67,69 @@ public class MatchService {
             match.getStatus(),
             sets
         );
+    }
+
+    // Neues Match erstellen
+    public Match createMatch(Match match) {
+        return matchRepository.save(match);
+    }
+
+    // Match aktualisieren
+    public Match updateMatch(Integer id, Match matchDetails) {
+        Match match = matchRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Match nicht gefunden mit ID: " + id));
+
+        match.setRoundId(matchDetails.getRoundId());
+        match.setStatusId(matchDetails.getStatusId());
+        match.setDescription(matchDetails.getDescription());
+        match.setTeam1Id(matchDetails.getTeam1Id());
+        match.setTeam2Id(matchDetails.getTeam2Id());
+        match.setTarget1Id(matchDetails.getTarget1Id());
+        match.setTarget2Id(matchDetails.getTarget2Id());
+
+        return matchRepository.save(match);
+    }
+
+    // Match partiell aktualisieren - nur nicht-null Werte werden übernommen
+    public Match partialUpdateMatch(Integer id, Match matchDetails) {
+        Match existingMatch = matchRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Match nicht gefunden mit ID: " + id));
+
+        if (matchDetails.getRoundId() != null) {
+            existingMatch.setRoundId(matchDetails.getRoundId());
+        }
+
+        if (matchDetails.getStatusId() != null) {
+            existingMatch.setStatusId(matchDetails.getStatusId());
+        }
+
+        if (matchDetails.getDescription() != null) {
+            existingMatch.setDescription(matchDetails.getDescription());
+        }
+
+        if (matchDetails.getTeam1Id() != null) {
+            existingMatch.setTeam1Id(matchDetails.getTeam1Id());
+        }
+
+        if (matchDetails.getTeam2Id() != null) {
+            existingMatch.setTeam2Id(matchDetails.getTeam2Id());
+        }
+
+        if (matchDetails.getTarget1Id() != null) {
+            existingMatch.setTarget1Id(matchDetails.getTarget1Id());
+        }
+
+        if (matchDetails.getTarget2Id() != null) {
+            existingMatch.setTarget2Id(matchDetails.getTarget2Id());
+        }
+
+        return matchRepository.save(existingMatch);
+    }
+    // Match löschen
+    public void deleteMatch(Integer id) {
+        if (!matchRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Match nicht gefunden mit ID: " + id);
+        }
+        matchRepository.deleteById(id);
     }
 }

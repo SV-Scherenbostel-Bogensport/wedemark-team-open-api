@@ -3,11 +3,9 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.MatchInfoDto;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Match;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.MatchService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,16 +33,38 @@ public class MatchController {
         return ResponseEntity.ok(match);
     }
 
+    // GET /api/matches/{id}/info - Erweiterte Info eines Matches abrufen
     @GetMapping("/{id}/info")
     public ResponseEntity<MatchInfoDto> getMatchWithSets(@PathVariable Integer id) {
         MatchInfoDto match = matchService.getMatchWithSets(id);
         return ResponseEntity.ok(match);
     }
 
-    // TODO: PATCH /api/matches/{id}/teams // Teams setzen nach vorheriger Runde/Match
-    // TODO: PATCH /api/matches/{id}/targets // nicht unbedingt nötig, da initiiert
-    // TODO: PATCH /api/matches/{id}/winner // Setzen nach match ende
-    // oder
-    // TODO: PATCH /api/matches/{id} // und optionalen Parametern (bisher favourite)
+    // POST /api/matches - neues Match erstellen
+    @PostMapping
+    public ResponseEntity<Match> createMatch(@RequestBody Match match) {
+        Match createdMatch = matchService.createMatch(match);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdMatch);
+    }
+    
+    // PUT /api/matches/{id} - Match aktualisieren
+    @PutMapping("/{id}")
+    public ResponseEntity<Match> updateMatch(@PathVariable Integer id, @RequestBody Match matchDetails) {
+        Match updatedMatch = matchService.updateMatch(id, matchDetails);
+        return ResponseEntity.ok(updatedMatch);
+    }
 
+    // PATCH /api/matches/{id}
+    @PatchMapping("/{id}")
+    public ResponseEntity<Match> partialUpdateMatch(@PathVariable Integer id, @RequestBody Match matchDetails) {
+        Match updatedMatch = matchService.partialUpdateMatch(id, matchDetails);
+        return ResponseEntity.ok(updatedMatch);
+    }
+
+    // DELETE /api/matches/{id} - Match löschen
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMatch(@PathVariable Integer id) {
+        matchService.deleteMatch(id);
+        return ResponseEntity.noContent().build();
+    }
 }

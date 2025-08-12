@@ -33,8 +33,6 @@ public class SetController {
 
     }
 
-    // TODO: GET /api/sets/{id}/arrows (sortiert nach Team?)
-
     // PUT /api/sets - Set hinzufügen oder aktualisieren
     @PutMapping
     public ResponseEntity<Set> upsertSet(@RequestBody Set set) {
@@ -49,13 +47,10 @@ public class SetController {
         return ResponseEntity.ok(savedSets);
     }
 
-
-
     // DELETE /api/sets/{id} - Set löschen
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSet(@PathVariable Integer id) {
         setService.deleteSet(id);
         return ResponseEntity.noContent().build();
     }
-
 }

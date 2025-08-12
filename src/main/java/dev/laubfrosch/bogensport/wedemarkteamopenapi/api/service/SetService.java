@@ -31,7 +31,7 @@ public class SetService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Set nicht gefunden mit ID: " + id));
     }
 
-    // Ein Set erstellen oder bestehenden bearbeiten
+    // Ein Set erstellen oder bestehendes bearbeiten
     public Set upsertSet(Set set) {
         Optional<Set> existingSet = setRepository.findByMatchIdAndSetIndex(
                 set.getMatchId(),
@@ -50,7 +50,7 @@ public class SetService {
         }
     }
 
-    // Mehrere Sets erstellen oder bestehenden bearbeiten
+    // Mehrere Sets erstellen oder bestehende bearbeiten
     public List<Set> upsertSets(List<Set> sets) {
         if (sets == null || sets.isEmpty()) {
             return new ArrayList<>();

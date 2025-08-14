@@ -35,7 +35,7 @@ VALUES
     ('Schützencorps Lehrte', null, null, true, false),
     ('Vegane Dino Nuggets', null, null, true, false),
     ('BSV Helstorf', null, null, true, false),
-    ('KKS Falkenauge Edemissen', null, null, true, true),
+    ('KKS Falkenauge Edemissen', null, null, true, false),
     ('BSC Clauen', null, null, true, false),
     ('Drei Blonde und nen Riese', null, null, true, false),
     ('VfL Grasdorf', null, null, true, false);

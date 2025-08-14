@@ -31,7 +31,7 @@ public class OverlayService {
         Target target = targetRepository.findByCode(targetCode)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Scheibe mit Code '" + targetCode + "' existiert nicht"));
 
-        Round round = roundService.getActiveNextOrLastRound();
+        Round round = roundService.getCurrentNextOrLastRound();
 
         return teamRepository.findTeamByRoundAndTarget(round, target)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -44,7 +44,7 @@ public class OverlayService {
         Target target = targetRepository.findByCode(targetCode)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Scheibe mit Code '" + targetCode + "' existiert nicht"));
 
-        Round round = roundService.getActiveNextOrLastRound();
+        Round round = roundService.getCurrentNextOrLastRound();
 
         Status statusProxy  = statusRepository.findStatusByRoundAndTarget(round, target)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,

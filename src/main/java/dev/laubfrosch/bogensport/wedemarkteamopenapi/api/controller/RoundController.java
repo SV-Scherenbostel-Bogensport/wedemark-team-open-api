@@ -4,10 +4,7 @@ import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.RoundMatchIdsRespon
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Round;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.RoundService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -56,10 +53,32 @@ public class RoundController {
         return ResponseEntity.ok(matches);
     }
 
-    // GET /api/rounds/current - Aktive Runde laden
-    @GetMapping("/current")
-    public ResponseEntity<Round> getCurrentRound() {
-        Round currentRound = roundService.getActiveNextOrLastRound();
-        return ResponseEntity.ok(currentRound);
+    @GetMapping("/active")
+    public ResponseEntity<Round> getCurrentRoundAlternative(
+            @RequestParam(value = "direction", required = false) RoundDirection direction
+    ) {
+        Round round;
+
+        if (direction == null) {
+            round = roundService.getCurrentNextOrLastRound();
+        } else {
+            round = switch (direction) {
+                case LAST -> roundService.getLastFinishedRound();
+                case CURRENT -> roundService.getCurrentRound();
+                case NEXT -> roundService.getNextUpcomingRound();
+            };
+        }
+
+        if (round == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(round);
+    }
+
+    // Enum für Rundenwahl
+    public enum RoundDirection {
+        LAST,
+        CURRENT,
+        NEXT
     }
 }

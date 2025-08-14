@@ -54,8 +54,8 @@ public class RoundService {
         return new RoundMatchIdsResponse(id, roundMatchIds);
     }
 
-    // Aktuelle Runde ermitteln
-    public Round getActiveNextOrLastRound() {
+    // Aktive Runde ermitteln
+    public Round getCurrentNextOrLastRound() {
 
         Optional<Round> round;
 
@@ -81,5 +81,20 @@ public class RoundService {
         }
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+
+    // Letzte Runde laden
+    public Round getLastFinishedRound() {
+        return roundRepository.getLastFinishedRound().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine beendete Runde gefunden"));
+    }
+
+    // Aktuelle Runde laden
+    public Round getCurrentRound() {
+        return roundRepository.getCurrentRound().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine aktuelle Runde gefunden"));
+    }
+
+    // Nächste Runde laden
+    public Round getNextUpcomingRound() {
+        return roundRepository.getNextUpcomingRound().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine anstehende Runde gefunden"));
     }
 }

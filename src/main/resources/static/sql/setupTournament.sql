@@ -32,20 +32,20 @@ INSERT INTO teams
     (name, contact_email, player_count, has_payed, looking_for_teammates)
 VALUES
     ('SV Scherenbostel', null, null, true, false),
-    ('Schützen-Corps Lehrte', null, null, true, false),
-    ('MTV Ohndorf', null, null, true, false),
+    ('Schützencorps Lehrte', null, null, true, false),
+    ('Vegane Dino Nuggets', null, null, true, false),
     ('BSV Helstorf', null, null, true, false),
     ('KKS Falkenauge Edemissen', null, null, true, true),
     ('BSC Clauen', null, null, true, false),
-    ('SV Gümmer', null, null, true, false),
+    ('Drei Blonde und nen Riese', null, null, true, false),
     ('VfL Grasdorf', null, null, true, false);
 
 
 -- Players
-INSERT INTO players
-    (team_id, squad_number, first_name, last_name)
-VALUES
-    (1, 1, 'Jörg', 'Ostendorp');
+-- INSERT INTO players
+--    (team_id, squad_number, first_name, last_name)
+--VALUES
+--     (1, 1, 'Jörg', 'Ostendorp');
 
 
 -- Rounds
@@ -107,7 +107,7 @@ VALUES
     (7, 2, '7. Qualifikationsmatch', 4, 3, 5, 6),
     (7, 2, '7. Qualifikationsmatch', 7, 8, 7, 8),
 
-    (8, 2, '[Ko1] Winners Bracket: Eingangsrunde: Q4 vs Q5', null, null, 1, 2),
+    (8, 2, '[Ko1] Winners Bracket: Eingangsrunde: Q5 vs Q4', null, null, 1, 2),
     (8, 2, '[Ko2] Winners Bracket: Eingangsrunde: Q2 vs Q7', null, null, 3, 4),
     (8, 2, '[Ko3] Winners Bracket: Eingangsrunde: Q1 vs Q8', null, null, 5, 6),
     (8, 2, '[Ko4] Winners Bracket: Eingangsrunde: Q3 vs Q6', null, null, 7, 8),

@@ -181,17 +181,17 @@ public class PlacementService {
         // Sortierung: Platzierte zuerst, dann unplatzierte in ursprünglicher Reihenfolge
         List<FinalPlacementDto> sortedPlacements = new ArrayList<>();
 
-        // Erst die platzierten Teams, sortiert nach Platz
-        placements.stream()
-                .filter(p -> p.getPlace() != null)
-                .sorted(Comparator.comparing(FinalPlacementDto::getPlace))
-                .forEach(sortedPlacements::add);
-
-        // Dann die unplatzierten Teams in ursprünglicher Reihenfolge
+        // Erst die unplatzierten Teams in ursprünglicher Reihenfolge
         // sortiert nach Leben → Satzpunkten → Qualifikationsplatz
         placements.stream()
                 .filter(p -> p.getPlace() == null)
                 .sorted(this::compareFinalPlacementsForTieBreaker)
+                .forEach(sortedPlacements::add);
+
+        // Dann die platzierten Teams, sortiert nach Platz
+        placements.stream()
+                .filter(p -> p.getPlace() != null)
+                .sorted(Comparator.comparing(FinalPlacementDto::getPlace))
                 .forEach(sortedPlacements::add);
 
         placements.clear();

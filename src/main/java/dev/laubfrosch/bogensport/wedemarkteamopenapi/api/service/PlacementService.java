@@ -233,6 +233,7 @@ public class PlacementService {
         List<Object[]> results = query.getResultList();
 
         return results.stream()
+                .filter(result -> result[0] != null && result[1] != null)
                 .collect(Collectors.toMap(
                         result -> ((Number) result[1]).intValue(), // teamId
                         result -> ((Number) result[0]).intValue()  // place

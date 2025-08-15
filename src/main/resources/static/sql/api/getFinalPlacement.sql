@@ -8,6 +8,7 @@ SELECT
 FROM Matches m
          JOIN Sets s ON s.match_id = m.match_id
 WHERE m.match_Id = 39
+  AND m.round_id <= :roundId
 GROUP BY m.team1_id, m.team2_id, m.match_id, m.status_id
 
 UNION ALL
@@ -21,6 +22,7 @@ SELECT
 FROM Matches m
          JOIN Sets s ON s.match_id = m.match_Id
 WHERE m.match_Id = 39
+  AND m.round_id <= :roundId
 GROUP BY m.team1_id, m.team2_id, m.match_id, m.status_id
 
 UNION ALL
@@ -34,6 +36,7 @@ SELECT
 FROM Matches m
          JOIN Sets s ON s.match_id = m.match_Id
 WHERE m.match_Id = 42
+  AND m.round_id <= :roundId
 GROUP BY m.team1_id, m.team2_id, m.match_id, m.status_id
 
 UNION ALL
@@ -47,6 +50,7 @@ SELECT
 FROM Matches m
          JOIN Sets s ON s.match_id = m.match_Id
 WHERE m.match_Id = 42
+  AND m.round_id <= :roundId
 GROUP BY m.team1_id, m.team2_id, m.match_id, m.status_id
 
 UNION ALL
@@ -60,6 +64,7 @@ SELECT
 FROM Matches m
          JOIN Sets s ON s.match_id = m.match_Id
 WHERE m.match_Id = 41
+  AND m.round_id <= :roundId
 GROUP BY m.team1_id, m.team2_id, m.match_id, m.status_id
 
 UNION ALL
@@ -73,6 +78,7 @@ SELECT
 FROM Matches m
          JOIN Sets s ON s.match_id = m.match_Id
 WHERE m.match_Id = 43
+  AND m.round_id <= :roundId
 GROUP BY m.team1_id, m.team2_id, m.match_id, m.status_id
 
 UNION ALL
@@ -91,6 +97,7 @@ SELECT
             FROM Matches m
                      JOIN Sets s ON s.match_id = m.match_Id
             WHERE m.match_Id = 45
+              AND m.round_id <= :roundId
             GROUP BY m.team1_id, m.team2_id, m.match_id, m.status_id
 
         )
@@ -98,6 +105,7 @@ SELECT
 FROM Matches m
          JOIN Sets s ON s.match_id = m.match_Id
 WHERE m.match_Id = 44
+  AND m.round_id <= :roundId
 GROUP BY m.team1_id, m.team2_id, m.match_id, m.status_id
 
 UNION ALL
@@ -116,6 +124,7 @@ SELECT
             FROM Matches m
                      JOIN Sets s ON s.match_id = m.match_Id
             WHERE m.match_Id = 45
+              AND m.round_id <= :roundId
             GROUP BY m.team1_id, m.team2_id, m.match_id, m.status_id
 
         )
@@ -123,6 +132,7 @@ SELECT
 FROM Matches m
          JOIN Sets s ON s.match_id = m.match_Id
 WHERE m.match_Id = 44
+  AND m.round_id <= :roundId
 GROUP BY m.team1_id, m.team2_id, m.match_id, m.status_id;
 
 

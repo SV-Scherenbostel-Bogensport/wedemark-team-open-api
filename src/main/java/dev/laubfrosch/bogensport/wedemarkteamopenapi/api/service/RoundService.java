@@ -74,7 +74,7 @@ public class RoundService {
         }
 
         //Fallback, falls keine anstehende Runde: Letzte beendete Runde ermitteln
-        round = roundRepository.getLastFinishedRound();
+        round = roundRepository.getLatestFinishedRoundWithoutActiveBefore();
         if (round.isPresent()) {
             return round
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.GONE));
@@ -85,7 +85,7 @@ public class RoundService {
 
     // Letzte Runde laden
     public Round getLastFinishedRound() {
-        return roundRepository.getLastFinishedRound().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine beendete Runde gefunden"));
+        return roundRepository.getLatestFinishedRoundWithoutActiveBefore().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine beendete Runde gefunden"));
     }
 
     // Aktuelle Runde laden

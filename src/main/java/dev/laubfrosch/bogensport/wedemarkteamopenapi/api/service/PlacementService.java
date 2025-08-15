@@ -31,22 +31,23 @@ public class PlacementService {
     }
 
     public QualificationPlacementResponse getQualificationPlacement() {
-        Optional<Round> round = roundRepository.getLastFinishedQualificationRound();
+        Optional<Round> round = roundRepository.getLatestFinishedQualificationRoundWithoutActiveBefore();
         List<QualificationPlacementDto> placements = loadQualificationPlacements(round);
         assignQualificationPlacementsAndJustifications(placements);
         return new QualificationPlacementResponse(round.orElse(null), placements);
     }
 
     public FinalPlacementResponse getFinalPlacement() {
-        Optional<Round> round = roundRepository.getLastFinishedFinalRound();
+        Optional<Round> round = roundRepository.getLatestFinishedRoundWithoutActiveBefore();
 
         if (round.isEmpty() && !roundRepository.hasQualificationFinished().orElse(false)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Es existiert noch kein Leaderboard für die Finalrunde");
         }
 
-        Map<Integer, Integer> qualificationPlacements = getQualificationPlacementsMap();
+
+        Map<Integer, Integer> qualificationPlacements = getQualificationPlacementsMap(round);
         List<FinalPlacementDto> placements = loadFinalPlacements(round, qualificationPlacements);
-        assignFinalPlacementsAndJustifications(placements);
+        assignFinalPlacementsAndJustifications(placements, round);
 
         return new FinalPlacementResponse(round.orElse(null), placements);
     }
@@ -167,8 +168,13 @@ public class PlacementService {
         return currentSetDiff == previousSetDiff;
     }
 
-    private void assignFinalPlacementsAndJustifications(List<FinalPlacementDto> placements) {
-        Map<Integer, Integer> finalPlacementsFromDb = loadFinalPlacementsFromDatabase();
+    private void assignFinalPlacementsAndJustifications(List<FinalPlacementDto> placements, Optional<Round> finalRound) {
+
+        if (finalRound.isEmpty()) {
+            return;
+        }
+
+        Map<Integer, Integer> finalPlacementsFromDb = loadFinalPlacementsFromDatabase(finalRound);
 
         // Plätze aus der Datenbank zuweisen
         for (FinalPlacementDto placement : placements) {
@@ -225,9 +231,10 @@ public class PlacementService {
         return 0;
     }
 
-    private Map<Integer, Integer> loadFinalPlacementsFromDatabase() {
+    private Map<Integer, Integer> loadFinalPlacementsFromDatabase(Optional<Round> round) {
         String sql = loadSqlFile("getFinalPlacement.sql");
         Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("roundId", round.map(Round::getRoundId).orElse(0));
 
         @SuppressWarnings("unchecked")
         List<Object[]> results = query.getResultList();
@@ -240,8 +247,7 @@ public class PlacementService {
                 ));
     }
 
-    private Map<Integer, Integer> getQualificationPlacementsMap() {
-        Optional<Round> qualRound = roundRepository.getLastFinishedQualificationRound();
+    private Map<Integer, Integer> getQualificationPlacementsMap(Optional<Round> qualRound) {
 
         if (qualRound.isEmpty()) {
             return Map.of();

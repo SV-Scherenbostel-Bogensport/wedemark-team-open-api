@@ -53,6 +53,7 @@ public class RoundController {
         return ResponseEntity.ok(matches);
     }
 
+    // GET /api/rounds/{id}/active - Aktuelle oder abweichende Runde laden
     @GetMapping("/active")
     public ResponseEntity<Round> getCurrentRoundAlternative(
             @RequestParam(value = "direction", required = false) RoundDirection direction
@@ -73,6 +74,13 @@ public class RoundController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(round);
+    }
+
+    // PATCH /api/rounds/set-ongoing aktuell anstehende Matche auf 'laufend' setzen
+    @PatchMapping("/set-ongoing")
+    public ResponseEntity<String> setUpcomingRoundOngoing() {
+        roundService.setUpcomingRoundOngoing();
+        return ResponseEntity.ok("round set to ongoing successfully");
     }
 
     // Enum für Rundenwahl

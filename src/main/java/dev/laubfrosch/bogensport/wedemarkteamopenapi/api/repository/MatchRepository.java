@@ -2,9 +2,11 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Match;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +26,9 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
             "LEFT JOIN FETCH m.target2 " +
             "WHERE m.matchId = :id")
     Optional<Match> findByIdWithDetails(Integer id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Match m SET m.statusId = :newStatusId WHERE m.roundId = :roundId AND m.statusId IN :oldStatusIds")
+    void updateMatchStatusByIds(@Param("newStatusId") Integer newStatusId, @Param("roundId") Integer roundId, @Param("oldStatusIds") List<Integer> oldStatusIds);
 }

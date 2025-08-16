@@ -97,4 +97,10 @@ public class RoundService {
     public Round getNextUpcomingRound() {
         return roundRepository.getNextUpcomingRound().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine anstehende Runde gefunden"));
     }
+
+    // Aktuelle Runde auf 'laufend' setzen
+    public void setUpcomingRoundOngoing() {
+        Round round = this.getCurrentNextOrLastRound();
+        matchRepository.updateMatchStatusByIds(3, round.getRoundId(), List.of(2, 4, 7)); //Todo: Über 'lable' lösen (3: 'laufen', 2: 'anstehend', 4: 'pausiert',  7: 'Einschießen')
+    }
 }

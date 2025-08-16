@@ -3,9 +3,10 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.*;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.enumeration.PlacementJustification;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Round;
-import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Set;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Status;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.RoundRepository;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.util.SqlFileReader;
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -58,30 +59,16 @@ public class PlacementService {
     }
 
     public TreePlacementResponse getTreePlacement() {
-        List<Round> treeRounds = roundService.getAllKnockoutRounds();
-        List<TreeMatchDto> treeMatches = new ArrayList<>();
+        List<Round> rawTreeRounds = roundService.getAllKnockoutRounds();
+        List<RoundDto> treeRounds = rawTreeRounds.stream().map(RoundDto::fromEntity).toList();
+        List<TreeMatchDto> treeMatches = treeRounds.stream()
+                .flatMap(round -> roundService.getAllRoundMatchIds(round.roundId())
+                        .matchIds().stream())
+                .map(matchService::getMatchWithSets)
+                .map(TreeMatchDto::fromMatchInfo)
+                .toList();
 
-        for (Round round : treeRounds) {
-
-            roundService.getAllRoundMatchIds(round.getRoundId()).matchIds().forEach(id -> {
-                MatchInfoDto matchInfo = matchService.getMatchWithSets(id);
-
-                TreeMatchDto match = new TreeMatchDto(
-                        matchInfo.matchId(),
-                        matchInfo.status(),
-                        matchInfo.target1Code(),
-                        matchInfo.target2Code(),
-                        matchInfo.team1().name(),
-                        matchInfo.team2().name(),
-                        matchInfo.sets().stream().mapToInt(Set::getPointsTeam1).sum(),
-                        matchInfo.sets().stream().mapToInt(Set::getPointsTeam2).sum()
-                );
-
-                treeMatches.add(match);
-            });
-        }
-
-        return new  TreePlacementResponse(treeRounds, treeMatches);
+        return new TreePlacementResponse(treeRounds, treeMatches);
     }
 
     private List<QualificationPlacementDto> loadQualificationPlacements(Optional<Round> round) {

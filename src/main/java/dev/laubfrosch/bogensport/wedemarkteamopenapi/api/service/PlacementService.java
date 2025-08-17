@@ -3,8 +3,10 @@ package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.*;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.enumeration.PlacementJustification;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Round;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Status;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.repository.RoundRepository;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.util.SqlFileReader;
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +26,14 @@ public class PlacementService {
     private static final int MAX_LIVES = 2;
     private final EntityManager entityManager;
     private final RoundRepository roundRepository;
+    private final RoundService roundService;
+    private final MatchService matchService;
 
-    public PlacementService(EntityManager entityManager, RoundRepository roundRepository) {
+    public PlacementService(EntityManager entityManager, RoundRepository roundRepository, RoundService roundService, MatchService matchService) {
         this.entityManager = entityManager;
         this.roundRepository = roundRepository;
+        this.roundService = roundService;
+        this.matchService = matchService;
     }
 
     public QualificationPlacementResponse getQualificationPlacement() {
@@ -50,6 +56,19 @@ public class PlacementService {
         assignFinalPlacementsAndJustifications(placements, round);
 
         return new FinalPlacementResponse(round.orElse(null), placements);
+    }
+
+    public TreePlacementResponse getTreePlacement() {
+        List<Round> rawTreeRounds = roundService.getAllKnockoutRounds();
+        List<RoundDto> treeRounds = rawTreeRounds.stream().map(RoundDto::fromEntity).toList();
+        List<TreeMatchDto> treeMatches = treeRounds.stream()
+                .flatMap(round -> roundService.getAllRoundMatchIds(round.roundId())
+                        .matchIds().stream())
+                .map(matchService::getMatchWithSets)
+                .map(TreeMatchDto::fromMatchInfo)
+                .toList();
+
+        return new TreePlacementResponse(treeRounds, treeMatches);
     }
 
     private List<QualificationPlacementDto> loadQualificationPlacements(Optional<Round> round) {

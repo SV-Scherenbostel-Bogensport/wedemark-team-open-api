@@ -1,7 +1,9 @@
 package dev.laubfrosch.bogensport.wedemarkteamopenapi.api.controller;
 
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.dto.RoundMatchIdsResponse;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Match;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.model.Round;
+import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.MatchService;
 import dev.laubfrosch.bogensport.wedemarkteamopenapi.api.service.RoundService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,11 @@ import java.util.List;
 public class RoundController {
 
     private final RoundService roundService;
+    private final MatchService matchService;
 
-    public RoundController(RoundService roundService) {
+    public RoundController(RoundService roundService, MatchService matchService) {
         this.roundService = roundService;
+        this.matchService = matchService;
     }
 
     // GET /api/rounds - alle Runden abrufen
@@ -81,6 +85,13 @@ public class RoundController {
     public ResponseEntity<String> setUpcomingRoundOngoing() {
         roundService.setUpcomingRoundOngoing();
         return ResponseEntity.ok("round set to ongoing successfully");
+    }
+
+    // GET /rounds/{id}/matches/by-target/{targetId}
+    @GetMapping("/{id}/matches/by-target/{targetId}")
+    public ResponseEntity<Match> getMatchByRoundAndTarget(@PathVariable Integer id, @PathVariable Integer targetId) {
+        Match match = matchService.getMatchByRoundIdAndTargetId(id, targetId);
+        return ResponseEntity.ok(match);
     }
 
     // Enum für Rundenwahl

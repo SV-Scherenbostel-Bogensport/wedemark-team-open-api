@@ -125,11 +125,17 @@ public class MatchService {
 
         return matchRepository.save(existingMatch);
     }
+
     // Match löschen
     public void deleteMatch(Integer id) {
         if (!matchRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Match nicht gefunden mit ID: " + id);
         }
         matchRepository.deleteById(id);
+    }
+
+    public Match getMatchByRoundIdAndTargetCode(Integer roundId, Integer targetId) {
+        return matchRepository.findByRoundIdAndTarget1IdOrRoundIdAndTarget2Id(roundId, targetId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Kein Match gefunden für Runde mit ID: " + roundId + " auf Scheibe mit ID: " + targetId));
     }
 }

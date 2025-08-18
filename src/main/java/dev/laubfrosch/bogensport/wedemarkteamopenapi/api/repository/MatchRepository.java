@@ -14,6 +14,8 @@ import java.util.Optional;
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Integer> {
 
+    Optional<Match> findByRoundIdAndTarget1IdOrRoundIdAndTarget2Id(Integer roundId, Integer targetId);
+
     @Query("SELECT m.matchId FROM Match m WHERE m.roundId = :roundId ORDER BY m.matchId")
     List<Integer> findMatchIdsByRoundId(@Param("roundId") Integer roundId);
 
